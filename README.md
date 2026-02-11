@@ -1,2 +1,2 @@
 # Dilúvio Espacial
-Um jogo onde um alienígena tem a missão de coletar alguns itens de sobrevivência, e depois construir uma nave espacial para fugir do planeta antes que ele seja destruído pelo DILÚVIO ESPACIAL.
+Dois seres de outro planeta receberam uma missão divina de construir uma espaçonave, antes que o mundo deles seja destruído, sem se esquecer de levar algumas das outras formas de vida do planeta. Porém, será que eles terão tempo suficiente para isso?
