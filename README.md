@@ -18,7 +18,7 @@ Dois seres de outro planeta receberam uma missão divina de construir uma espaç
 - Dois personagens de outro planeta, ambos verdes com duas antenas na cabeça (que são seus ouvidos), olhos pretos grandes e redondos (sem pupilas), pernas e mãos curtas (com três dedos).
 
 ### Artefatos
-- Algumas frutas espalhadas pelo mapa, que pode fazer o personagem que a pegar andar mais rápido durante 15 segundos.
+- Algumas frutas espalhadas pelo mapa, que podem fazer os personagens que as pegarem andar mais rápido durante 15 segundos.
 
 ### Fonte de receita
 - Arrecadar, pelo menos, R$ 500,00 por mês para cada desenvolvedor, o que equivale a R$ 1000,00 por mês ao todo, e R$ 12000,00 por ano.  
