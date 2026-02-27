@@ -5,8 +5,10 @@ Dois seres de outro planeta receberam uma missão divina de construir uma espaç
 
 ## Universo
 ### Referência
-- A história de Noé, da Bíblia.
+- A história de Noé, da Bíblia
 - Super Mario
+- Sprint Fox
+- Hunters of Ancient Beasts
 
 ### Objetivos
 - Os dois seres de outro planeta precisam coletar itens para construir uma nave espacial, buscar os demais seres vivos do planeta, chegar na nave e fugir do planeta e da Chuva de Meteoros antes que o tempo acabe.
