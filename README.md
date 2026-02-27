@@ -63,17 +63,21 @@ Baixo custo inicial (desenvolvimento indie 2D).
 Tamanho da equipe
 
 ○ Equipe principal
+
 ■ Augusto
 Programação, level design, integração de mecânicas.
 Custo: desenvolvedor interno
+
 ■ Camille
 Arte 2D, animações, UI e identidade visual.
 Custo: desenvolvedora interna
 
 ○ Equipe de Marketing
+
 ■ Augusto
 Gestão de redes sociais e divulgação.
 Custo: Marketing
+
 ■ Camille
 Apoio na gestão de redes sociais e divulgação.
 Custo: Marketing
