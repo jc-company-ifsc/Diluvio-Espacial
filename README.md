@@ -29,7 +29,7 @@ Dois seres de outro planeta receberam uma missão divina de construir uma espaç
 - Vender acessórios com os personagens do jogo estampados, como canecas, camisetas, bonés e cadernos escolares, a medida que o jogo fosse se popularizando, engajando pessoas pelas redes sociais (como Instagram, Youtube e TikTok) a falarem e divulgarem o jogo.
 - Vender skins mais elaboradas para os dois personagens por um preço mais baixo, e deixando alguns modelos gratuitos disponíveis para os usuários se empolgarem com a ideia de trocar de skin nas partidas.
 
-## Dilúvio Espacial
+## GDD
 ### Visão geral
 Jogo 2D de plataforma com limite de tempo, onde dois seres alienígenas precisam coletar itens para construir uma nave e salvar espécies nativas antes da destruição do planeta por uma chuva de meteoros.
 
