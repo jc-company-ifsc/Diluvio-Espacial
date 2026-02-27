@@ -129,20 +129,29 @@ As plataformas ficam estáticas no mapa, mas não possui chão em baixo (se o jo
 
 #### Captura de Espécies
 ○ Detalhes
+
 Os jogadores precisam avançar pelo cenário horizontal com obstáculos (pulando e tendo agilidade para não cair em uma plataforma instável) e desafios específicos da fase (plataformas clássicas como as da fase anterior, plataformas que se deslocam para cima e para baixo para chegar a um lugar específico, e plataformas instáveis).
+
 ○ Como funciona
+
 As plataformas ficam estáticas no mapa, mas não possui chão em baixo (se o jogador cair, precisa recomeçar a fase). Os jogadores precisam pular entre as plataformas, pular na plataforma que se desloca para cima ou para baixo para chegar em outra plataforma em outro nível, e ter agilidade quando chegar em uma plataforma instável, que vai caindo à medida que o jogador permanece em cima dela.
 
 #### Fuga Final
 ○ Detalhes
+
 Fase automática com destruição progressiva do cenário.
+
 ○ Como funciona
+
 Jogador deve correr, pular e evitar meteoros até chegar na nave.
 
 #### Pilotagem Espacial
 ○ Detalhes
+
 Mudança para gameplay estilo shooter lateral.
+
 ○ Como funciona
+
 Desviar de asteroides e sobreviver até atingir o novo planeta.
 
 ### História e jogabilidade
@@ -210,23 +219,24 @@ Pular
 Morrer
 
 ### Agendar
+
 ● Protótipo jogável
-○ 3 semanas
+- 3 semanas
 ■ Mapa completo
 ■ Sistema de tempo
 
 ● Fase 1 completa
-○ 3 semanas
+- 3 semanas
 ■ Caverna funcional
 ■ Desafios
 
 ● Fase 2 completa
-○ 3 semanas
+- 3 semanas
 ■ Selva
 ■ Desafios
 
 ● Fase final e polimento
-○ 3 semanas
+- 3 semanas
 ■ Pilotagem
 ■ Cutscenes
 ■ Ajustes finais
