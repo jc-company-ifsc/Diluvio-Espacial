@@ -95,6 +95,16 @@ class scene0 extends Phaser.Scene {
         this.nv.anims.stop();
       }
     });
+
+    setInterval(() => {
+      this.timer -= 1;
+      this.textTime.setText('Time: ${this.timer}'); 
+
+      if (this.timer <= 0) {
+        this.scene.stop("game-over");
+        this.scene.start("scene1");
+      }
+    }, 1000);
   }
 }
 
