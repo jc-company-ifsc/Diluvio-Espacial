@@ -22,34 +22,15 @@ class scene0 extends Phaser.Scene {
 
   create() {
     this.anims.create({
-      key: "walk-up",
-      frames: this.anims.generateFrameNumbers("nv", { start: 0, end: 7 }),
+      key: "flying",
+      frames: this.anims.generateFrameNumbers("nv", { start: 0, end: 4 }),
       frameRate: 10,
       repeat: -1,
     });
 
-    this.anims.create({
-      key: "walk-left",
-      frames: this.anims.generateFrameNumbers("nv", { start: 8, end: 15 }),
-      frameRate: 10,
-      repeat: -1,
-    });
-
-    this.anims.create({
-      key: "walk-right",
-      frames: this.anims.generateFrameNumbers("nv", { start: 24, end: 31 }),
-      frameRate: 10,
-      repeat: -1,
-    });
-
-    this.anims.create({
-      key: "walk-down",
-      frames: this.anims.generateFrameNumbers("nv", { start: 16, end: 23 }),
-      frameRate: 10,
-      repeat: -1,
-    });
-
-    this.nv = this.physics.add.sprite(200, 100, "nv", 20);
+    this.nv = this.physics.add.sprite(160, 200, "nv");
+    this.nv.play("flying");
+    this.nv.setCollideWorldBounds(true);
 
     this.joystick = this.plugins.get("rexvirtualjoystickplugin").add(this, {
       x: 50,
@@ -73,38 +54,12 @@ class scene0 extends Phaser.Scene {
       if (this.joystick.force > 0) {
         this.nv.setVelocity(
           this.direction.x * this.speed,
-          this.direction.y * this.speed
+          0 // this.direction.y * this.speed
         );
-
-        switch (true) {
-          case this.joystick.angle >= -135 && this.joystick.angle < -45:
-            this.nv.anims.play("walk-up", true);
-            break;
-          case this.joystick.angle >= -45 && this.joystick.angle < 45:
-            this.nv.anims.play("walk-right", true);
-            break;
-          case this.joystick.angle >= 45 && this.joystick.angle < 135:
-            this.nv.anims.play("walk-down", true);
-            break;
-          case this.joystick.angle >= 135 || this.joystick.angle < -135:
-            this.nv.anims.play("walk-left", true);
-            break;
-        }
       } else {
         this.nv.setVelocity(0, 0);
-        this.nv.anims.stop();
       }
     });
-
-    setInterval(() => {
-      this.timer -= 1;
-      this.textTime.setText('Time: ${this.timer}'); 
-
-      if (this.timer <= 0) {
-        this.scene.stop("game-over");
-        this.scene.start("scene1");
-      }
-    }, 1000);
   }
 }
 
