@@ -8,9 +8,11 @@ class scene0 extends Phaser.Scene {
   }
 
   preload() {
+    this.load.image("background", "assets/background.png");
+
     this.load.spritesheet("nv", "assets/personagens/nv.png", {
-      frameWidth: 16,
-      frameHeight: 16,
+      frameWidth: 32,
+      frameHeight: 32,
     });
 
     this.load.plugin(
@@ -21,6 +23,8 @@ class scene0 extends Phaser.Scene {
   }
 
   create() {
+    this.background = this.add.tileSprite(160, 120, 320, 240, "background");
+
     this.anims.create({
       key: "flying",
       frames: this.anims.generateFrameNumbers("nv", { start: 0, end: 4 }),
@@ -60,6 +64,10 @@ class scene0 extends Phaser.Scene {
         this.nv.setVelocity(0, 0);
       }
     });
+  }
+
+  update() {
+    this.background.tilePositionY -= 1;
   }
 }
 
