@@ -5,6 +5,9 @@ class scene0 extends Phaser.Scene {
     this.threshold = 0.1;
     this.speed = 100;
     this.direction = undefined;
+    this.asteroids = undefined;
+    this.newAsteroid = true;
+    this.canShoot = true;
   }
 
   preload() {
@@ -13,6 +16,16 @@ class scene0 extends Phaser.Scene {
     this.load.spritesheet("nv", "assets/personagens/nv.png", {
       frameWidth: 32,
       frameHeight: 32,
+    });
+
+    this.load.spritesheet("laser-beam", "assets/laser-beam.png", {
+      frameWidth: 16,
+      frameHeight: 16,
+    });
+
+    this.load.spritesheet("asteroids", "assets/asteroids.png", {
+      frameWidth: 48,
+      frameHeight: 48,
     });
 
     this.load.plugin(
@@ -35,6 +48,23 @@ class scene0 extends Phaser.Scene {
     this.nv = this.physics.add.sprite(160, 200, "nv");
     this.nv.play("flying");
     this.nv.setCollideWorldBounds(true);
+    this.canShoot = true;
+
+    this.anims.create({
+      key: "laser",
+      frames: this.anims.generateFrameNumbers("laser-beam", {
+        start: 0,
+        end: 1,
+      }),
+      frameRate: 10,
+      repeat: -1,
+    });
+
+    this.laserBeams = this.physics.add.group();
+    this.canShoot = true;
+
+    this.asteroids = this.physics.add.group();
+    this.newAsteroid = true;
 
     this.joystick = this.plugins.get("rexvirtualjoystickplugin").add(this, {
       x: 50,
@@ -58,16 +88,96 @@ class scene0 extends Phaser.Scene {
       if (this.joystick.force > 0) {
         this.nv.setVelocity(
           this.direction.x * this.speed,
-          0 // this.direction.y * this.speed
+          0, // this.direction.y * this.speed
         );
       } else {
         this.nv.setVelocity(0, 0);
       }
     });
+
+    this.shootButton = this.add
+      .sprite(270, 200, "laser-beam")
+      .setInteractive()
+      .on("pointerdown", () => {
+        this.shootButton.setTint(0xaaaaaa);
+
+        if (this.canShoot) {
+          const laser = this.laserBeams.create(
+            this.nv.x,
+            this.nv.y - 20,
+            "laser-beam",
+          );
+          laser.setVelocity(0, -300);
+          this.canShoot = false;
+
+          this.time.addEvent({
+            delay: 500,
+            callback: () => {
+              this.canShoot = true;
+            },
+          });
+        }
+      })
+      .on("pointerout", () => {
+        this.shootButton.clearTint();
+      })
+      .setDepth(999);
+
+    this.physics.add.overlap(
+      this.laserBeams,
+      this.asteroids,
+      (laser, asteroid) => {
+        this.laserBeams.remove(laser, true, true);
+        laser.destroy();
+
+        if (asteroid.frame.name >= 6) {
+          this.asteroids.remove(asteroid, true, true);
+          asteroid.destroy();
+        } else {
+          asteroid.setFrame(asteroid.frame.name + 3);
+          asteroid.setSize(
+            asteroid.body.width * 0.5,
+            asteroid.body.height * 0.5,
+          );
+        }
+      },
+    );
+
+    this.physics.add.overlap(this.nv, this.asteroids, (nv, asteroid) => {
+      this.scene.stop();
+      this.scene.start("gameover");
+    });
   }
 
   update() {
     this.background.tilePositionY -= 1;
+
+    if (this.newAsteroid) {
+      const x = Phaser.Math.Between(0, this.game.config.width);
+      const asteroid = this.asteroids.create(
+        x,
+        -50,
+        "asteroids",
+        Math.floor(Math.random() * 3),
+      );
+      asteroid.setVelocity(0, Phaser.Math.Between(10, 50));
+      this.newAsteroid = false;
+
+      this.time.addEvent({
+        delay: Phaser.Math.Between(1000, 2000),
+        callback: () => {
+          this.newAsteroid = true;
+        },
+      });
+    }
+
+    const asteroidsOnScene = this.asteroids.getChildren();
+    asteroidsOnScene.forEach((asteroid) => {
+      if (asteroid.y > this.game.config.height + 50) {
+        this.asteroids.remove(asteroid, true, true);
+        asteroid.destroy();
+      }
+    });
   }
 }
 
