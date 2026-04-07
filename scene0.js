@@ -5,9 +5,6 @@ class scene0 extends Phaser.Scene {
     this.threshold = 0.1;
     this.speed = 100;
     this.direction = undefined;
-    this.asteroids = undefined;
-    this.newAsteroid = true;
-    this.canShoot = true;
   }
 
   preload() {
@@ -51,7 +48,7 @@ class scene0 extends Phaser.Scene {
     this.canShoot = true;
 
     this.anims.create({
-      key: "laser",
+      key: "laser-spinning",
       frames: this.anims.generateFrameNumbers("laser-beam", {
         start: 0,
         end: 1,
@@ -108,6 +105,7 @@ class scene0 extends Phaser.Scene {
             "laser-beam",
           );
           laser.setVelocity(0, -300);
+          laser.play("laser-spinning");
           this.canShoot = false;
 
           this.time.addEvent({
@@ -118,7 +116,7 @@ class scene0 extends Phaser.Scene {
           });
         }
       })
-      .on("pointerout", () => {
+      .on("pointerup", () => {
         this.shootButton.clearTint();
       })
       .setDepth(999);
@@ -128,11 +126,9 @@ class scene0 extends Phaser.Scene {
       this.asteroids,
       (laser, asteroid) => {
         this.laserBeams.remove(laser, true, true);
-        laser.destroy();
 
         if (asteroid.frame.name >= 6) {
           this.asteroids.remove(asteroid, true, true);
-          asteroid.destroy();
         } else {
           asteroid.setFrame(asteroid.frame.name + 3);
           asteroid.setSize(
@@ -145,7 +141,7 @@ class scene0 extends Phaser.Scene {
 
     this.physics.add.overlap(this.nv, this.asteroids, (nv, asteroid) => {
       this.scene.stop();
-      this.scene.start("gameover");
+      this.scene.restart();
     });
   }
 
@@ -171,11 +167,17 @@ class scene0 extends Phaser.Scene {
       });
     }
 
+    const laserOnScene = this.laserBeams.getChildren();
+    laserOnScene.forEach((laser) => {
+      if (laser.y < -50) {
+        this.laserBeams.remove(laser, true, true);
+      }
+    });
+
     const asteroidsOnScene = this.asteroids.getChildren();
     asteroidsOnScene.forEach((asteroid) => {
       if (asteroid.y > this.game.config.height + 50) {
         this.asteroids.remove(asteroid, true, true);
-        asteroid.destroy();
       }
     });
   }
