@@ -121,6 +121,19 @@ class scene0 extends Phaser.Scene {
       })
       .setDepth(999);
 
+    this.nextButton = this.add
+      .text(280, 20, "Próxima", {
+        fontSize: "12px",
+        fill: "#ffffff",
+        backgroundColor: "#000000",
+        padding: { x: 5, y: 5 },
+      })
+      .setInteractive()
+      .on("pointerdown", () => {
+        this.scene.start("scene1");
+      })
+      .setDepth(999);
+
     this.physics.add.overlap(
       this.laserBeams,
       this.asteroids,
