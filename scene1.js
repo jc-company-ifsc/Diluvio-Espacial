@@ -5,9 +5,9 @@ class scene1 extends Phaser.Scene {
 
   preload() {
     this.load.image("mapBg", "assets/fase 2/Tiled3.png");
-    this.load.spritesheet("vd", "assets/fase 2/vd.png", {
-      frameWidth: 16,
-      frameHeight: 16,
+    this.load.spritesheet("vd", "assets/personagens/Astronaut_Idle (1).png", {
+      frameWidth: 32,
+      frameHeight: 32,
     });
   }
 

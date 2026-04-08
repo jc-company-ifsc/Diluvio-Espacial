@@ -8,19 +8,19 @@ class scene0 extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image("background", "assets/fundo4.png");
+    this.load.image("background", "assets/fase 4/fundo4.png");
 
     this.load.spritesheet("nv", "assets/personagens/nv.png", {
       frameWidth: 32,
       frameHeight: 32,
     });
 
-    this.load.spritesheet("laser-beam", "assets/laser-beam.png", {
+    this.load.spritesheet("laser-beam", "assets/fase 4/laser-beam.png", {
       frameWidth: 16,
       frameHeight: 16,
     });
 
-    this.load.spritesheet("asteroids", "assets/asteroids.png", {
+    this.load.spritesheet("asteroids", "assets/fase 4/asteroids.png", {
       frameWidth: 48,
       frameHeight: 48,
     });
