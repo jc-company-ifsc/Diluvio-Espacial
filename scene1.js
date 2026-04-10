@@ -4,7 +4,20 @@ class scene1 extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image("mapBg", "assets/fase 2/Tiled3.png");
+    this.load.tilemapTmx('map', 'assets/fase 2/Tiled3.tmx');
+    this.load.image('background3', 'assets/fase 2/jogo boi/Diluvio-Espacial-main/Assets/Caverna/background3.png');
+    this.load.image('background4a', 'assets/fase 2/jogo boi/Diluvio-Espacial-main/Assets/Caverna/background4a.png');
+    this.load.image('background1', 'assets/fase 2/jogo boi/Diluvio-Espacial-main/Assets/Caverna/background1.png');
+    this.load.image('mainlev_build', 'assets/fase 2/jogo boi/Diluvio-Espacial-main/Assets/Caverna/mainlev_build.png');
+    this.load.image('props1', 'assets/fase 2/jogo boi/Diluvio-Espacial-main/Assets/Caverna/props1.png');
+    this.load.image('CloudsBack', 'assets/fase 2/jogo boi/FreePlatformerNA/Background/CloudsBack.png');
+    this.load.image('BGFront', 'assets/fase 2/jogo boi/FreePlatformerNA/Background/BGFront.png');
+    this.load.image('CloudsFront', 'assets/fase 2/jogo boi/FreePlatformerNA/Background/CloudsFront.png');
+    this.load.image('Tileset', 'assets/fase 2/jogo boi/FreePlatformerNA/Foreground/Tileset.png');
+    this.load.image('TilesExamples', 'assets/fase 2/jogo boi/FreePlatformerNA/Foreground/TilesExamples.png');
+    this.load.image('Trees', 'assets/fase 2/jogo boi/FreePlatformerNA/Foreground/Trees.png');
+    this.load.image('SuperMarioBrosMap5-3', 'assets/SuperMarioBrosMap5-3.png');
+    this.load.image('props2', 'assets/fase 2/jogo boi/Diluvio-Espacial-main/Assets/Caverna/props2.png');
     this.load.spritesheet("vd", "assets/personagens/Astronaut_Idle (1).png", {
       frameWidth: 64,
       frameHeight: 64,
@@ -12,17 +25,38 @@ class scene1 extends Phaser.Scene {
   }
 
   create() {
-    const mapWidth = 2820;
-    const mapHeight = 1539;
+    const map = this.make.tilemap({ key: 'map' });
 
-    this.add.image(0, 0, "mapBg").setOrigin(0, 0);
+    const background3 = map.addTilesetImage('background3', 'background3');
+    const background4a = map.addTilesetImage('background4a', 'background4a');
+    const background1 = map.addTilesetImage('background1', 'background1');
+    const mainlev_build = map.addTilesetImage('mainlev_build', 'mainlev_build');
+    const props1 = map.addTilesetImage('props1', 'props1');
+    const CloudsBack = map.addTilesetImage('CloudsBack', 'CloudsBack');
+    const BGFront = map.addTilesetImage('BGFront', 'BGFront');
+    const CloudsFront = map.addTilesetImage('CloudsFront', 'CloudsFront');
+    const Tileset = map.addTilesetImage('Tileset', 'Tileset');
+    const TilesExamples = map.addTilesetImage('TilesExamples', 'TilesExamples');
+    const Trees = map.addTilesetImage('Trees', 'Trees');
+    const SuperMarioBrosMap5_3 = map.addTilesetImage('SuperMarioBrosMap5-3', 'SuperMarioBrosMap5-3');
+    const props2 = map.addTilesetImage('props2', 'props2');
 
-    this.physics.world.setBounds(0, 0, mapWidth, mapHeight);
-    this.cameras.main.setBounds(0, 0, mapWidth, mapHeight);
+    const fundo0 = map.createLayer('fundo 0', [background3, background4a, background1, mainlev_build, props1, CloudsBack, BGFront, CloudsFront, Tileset, TilesExamples, Trees, SuperMarioBrosMap5_3, props2], 0, 0);
+    const fundo1 = map.createLayer('fundo 1', [background3, background4a, background1, mainlev_build, props1, CloudsBack, BGFront, CloudsFront, Tileset, TilesExamples, Trees, SuperMarioBrosMap5_3, props2], 0, 0);
+    const fundo2 = map.createLayer('fundo 2', [background3, background4a, background1, mainlev_build, props1, CloudsBack, BGFront, CloudsFront, Tileset, TilesExamples, Trees, SuperMarioBrosMap5_3, props2], 0, 0);
+    const terra = map.createLayer('terra', [background3, background4a, background1, mainlev_build, props1, CloudsBack, BGFront, CloudsFront, Tileset, TilesExamples, Trees, SuperMarioBrosMap5_3, props2], 0, 0);
 
-    this.player = this.physics.add.sprite(160, 160, "vd", 0);
-    this.player.setCollideWorldBounds(true);
+    terra.setCollisionByExclusion([-1]);
+
+    this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+    this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+
+    this.player = this.physics.add.sprite(160, 100, "vd", 0);
+    this.player.setCollideWorldBounds(false);
     this.player.body.setSize(24, 28).setOffset(20, 20);
+    this.player.setGravityY(300);
+
+    this.physics.add.collider(this.player, terra);
 
     this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
 
@@ -52,26 +86,22 @@ class scene1 extends Phaser.Scene {
   update() {
     const speed = 140;
     let vx = 0;
-    let vy = 0;
 
     if (this.cursors.left.isDown) {
       vx = -speed;
       this.player.setFlipX(true);
-    }
-    if (this.cursors.right.isDown) {
+    } else if (this.cursors.right.isDown) {
       vx = speed;
       this.player.setFlipX(false);
     }
-    if (this.cursors.up.isDown) {
-      vy = -speed;
-    }
-    if (this.cursors.down.isDown) {
-      vy = speed;
+
+    this.player.setVelocityX(vx);
+
+    if (this.cursors.up.isDown && this.player.body.onFloor()) {
+      this.player.setVelocityY(-200);
     }
 
-    this.player.setVelocity(vx, vy);
-
-    if (vx !== 0 || vy !== 0) {
+    if (vx !== 0) {
       this.player.anims.play("walk", true);
     } else {
       this.player.anims.stop();
