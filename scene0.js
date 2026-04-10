@@ -8,19 +8,19 @@ class scene0 extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image("background", "assets/fase 4/fundo4.png");
+    this.load.image("background", "assets/fase4/fundo4.png");
 
     this.load.spritesheet("nv", "assets/personagens/nv.png", {
       frameWidth: 32,
       frameHeight: 32,
     });
 
-    this.load.spritesheet("laser-beam", "assets/fase 4/laser-beam.png", {
+    this.load.spritesheet("laser-beam", "assets/fase4/laser-beam.png", {
       frameWidth: 16,
       frameHeight: 16,
     });
 
-    this.load.spritesheet("asteroids", "assets/fase 4/asteroids.png", {
+    this.load.spritesheet("asteroids", "assets/fase4/asteroids.png", {
       frameWidth: 48,
       frameHeight: 48,
     });
@@ -30,10 +30,16 @@ class scene0 extends Phaser.Scene {
       "./rexvirtualjoystickplugin.min.js",
       true,
     );
+
+    this.load.audio("music4", "assets/fase4/music4.mp3");
+    this.load.audio("laser", "assets/fase4/laser.mp3");
   }
 
   create() {
     this.background = this.add.tileSprite(160, 120, 320, 240, "background");
+
+    this.music = this.sound.add("music4", { loop: true }).play();
+    this.laser = this.sound.add("laser").play();
 
     this.anims.create({
       key: "flying",
@@ -109,7 +115,7 @@ class scene0 extends Phaser.Scene {
           this.canShoot = false;
 
           this.time.addEvent({
-            delay: 500,
+            delay: 100,
             callback: () => {
               this.canShoot = true;
             },
@@ -169,7 +175,7 @@ class scene0 extends Phaser.Scene {
         "asteroids",
         Math.floor(Math.random() * 3),
       );
-      asteroid.setVelocity(0, Phaser.Math.Between(10, 50));
+      asteroid.setVelocity(0, Phaser.Math.Between(100, 150));
       this.newAsteroid = false;
 
       this.time.addEvent({

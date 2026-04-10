@@ -5,7 +5,7 @@ class scene1 extends Phaser.Scene {
 
   preload() {
     this.load.image("mapBg", "assets/fase 2/Tiled3.png");
-    this.load.spritesheet("vd", "assets/personagens/Astronaut_Idle (1).png", {
+    this.load.spritesheet("az", "assets/personagens/az.png", {
       frameWidth: 64,
       frameHeight: 64,
     });
@@ -20,7 +20,7 @@ class scene1 extends Phaser.Scene {
     this.physics.world.setBounds(0, 0, mapWidth, mapHeight);
     this.cameras.main.setBounds(0, 0, mapWidth, mapHeight);
 
-    this.player = this.physics.add.sprite(160, 160, "vd", 0);
+    this.player = this.physics.add.sprite(160, 160, "az", 0);
     this.player.setCollideWorldBounds(true);
     this.player.body.setSize(24, 28).setOffset(20, 20);
 
@@ -30,7 +30,7 @@ class scene1 extends Phaser.Scene {
 
     this.anims.create({
       key: "walk",
-      frames: this.anims.generateFrameNumbers("vd", { start: 0, end: 3 }),
+      frames: this.anims.generateFrameNumbers("az", { start: 0, end: 3 }),
       frameRate: 10,
       repeat: -1,
     });
