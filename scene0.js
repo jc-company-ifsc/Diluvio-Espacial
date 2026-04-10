@@ -8,19 +8,19 @@ class scene0 extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image("background", "assets/fase 4/fundo4.png");
+    this.load.image("background", "assets/fase4/fundo4.png");
 
     this.load.spritesheet("nv", "assets/personagens/nv.png", {
       frameWidth: 32,
       frameHeight: 32,
     });
 
-    this.load.spritesheet("laser-beam", "assets/fase 4/laser-beam.png", {
+    this.load.spritesheet("laser-beam", "assets/fase4/laser-beam.png", {
       frameWidth: 16,
       frameHeight: 16,
     });
 
-    this.load.spritesheet("asteroids", "assets/fase 4/asteroids.png", {
+    this.load.spritesheet("asteroids", "assets/fase4/asteroids.png", {
       frameWidth: 48,
       frameHeight: 48,
     });
@@ -30,10 +30,19 @@ class scene0 extends Phaser.Scene {
       "./rexvirtualjoystickplugin.min.js",
       true,
     );
+
+    this.load.audio("music4", "assets/fase4/music4.mp3");
+    this.load.audio("laser", "assets/fase4/laser.mp3");
+    this.load.audio("explosion", "assets/fase4/explosion.mp3");
   }
 
   create() {
     this.background = this.add.tileSprite(160, 120, 320, 240, "background");
+
+    this.music = this.sound.add("music4", { loop: true });
+    this.music.play();
+    this.laser = this.sound.add("laser");
+    this.explosion = this.sound.add("explosion");
 
     this.anims.create({
       key: "flying",
@@ -99,6 +108,7 @@ class scene0 extends Phaser.Scene {
         this.shootButton.setTint(0xaaaaaa);
 
         if (this.canShoot) {
+          this.laser.play();
           const laser = this.laserBeams.create(
             this.nv.x,
             this.nv.y - 20,
@@ -109,7 +119,7 @@ class scene0 extends Phaser.Scene {
           this.canShoot = false;
 
           this.time.addEvent({
-            delay: 500,
+            delay: 250,
             callback: () => {
               this.canShoot = true;
             },
@@ -141,6 +151,7 @@ class scene0 extends Phaser.Scene {
         this.laserBeams.remove(laser, true, true);
 
         if (asteroid.frame.name >= 6) {
+          this.explosion.play();
           this.asteroids.remove(asteroid, true, true);
         } else {
           asteroid.setFrame(asteroid.frame.name + 3);
@@ -153,6 +164,9 @@ class scene0 extends Phaser.Scene {
     );
 
     this.physics.add.overlap(this.nv, this.asteroids, (nv, asteroid) => {
+      this.music.stop();
+      this.explosion.play();
+
       this.scene.stop();
       this.scene.restart();
     });
@@ -169,7 +183,7 @@ class scene0 extends Phaser.Scene {
         "asteroids",
         Math.floor(Math.random() * 3),
       );
-      asteroid.setVelocity(0, Phaser.Math.Between(10, 50));
+      asteroid.setVelocity(0, Phaser.Math.Between(65, 90));
       this.newAsteroid = false;
 
       this.time.addEvent({
