@@ -67,7 +67,7 @@ class scene0 extends Phaser.Scene {
     this.livesSprites = this.add.group();
     this.livesSprites.clear(true, true);
     for (let i = 0; i < this.game.lives; i++) {
-      this.livesSprites.create(50 + i * 18, 15, "vida").setScale(0.5);
+      this.livesSprites.create(50 + i * 18, 15, "vida").setScale(0.5).setDepth(999);
     }
 
     this.anims.create({
