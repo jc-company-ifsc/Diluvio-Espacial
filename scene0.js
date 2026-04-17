@@ -27,6 +27,11 @@ class scene0 extends Phaser.Scene {
 
     this.load.image("vida", "assets/fase4/vida.png");
 
+    this.load.spritesheet("explosion", "assets/fase4/explosion.png", {
+      frameWidth: 32,
+      frameHeight: 32,
+    });
+
     this.load.plugin(
       "rexvirtualjoystickplugin",
       "./rexvirtualjoystickplugin.min.js",
@@ -85,6 +90,15 @@ class scene0 extends Phaser.Scene {
 
     this.asteroids = this.physics.add.group();
     this.newAsteroid = true;
+
+    this.explosionAnim = this.anims.create({
+      key: "explosion",
+      frames: this.anims.generateFrameNumbers("explosion", {
+        start: 0,
+        end: 4,
+      }),
+      frameRate: 10
+    });
 
     this.joystick = this.plugins.get("rexvirtualjoystickplugin").add(this, {
       x: 50,
@@ -165,6 +179,11 @@ class scene0 extends Phaser.Scene {
         this.laserBeams.remove(laser, true, true);
 
         if (asteroid.frame.name >= 6) {
+          const explosionSprite = this.add.sprite(asteroid.x, asteroid.y, "explosion");
+          explosionSprite.play("explosion");
+          explosionSprite.on("animationcomplete", () => {
+            explosionSprite.destroy();
+          });
           this.explosion.play();
           this.asteroids.remove(asteroid, true, true);
         } else {
@@ -179,16 +198,28 @@ class scene0 extends Phaser.Scene {
 
     this.physics.add.overlap(this.nv, this.asteroids, (nv, asteroid) => {
       this.music.stop();
+
+      this.nv.disableBody(true, true);
+      this.canShoot = false;
+      
       this.explosion.play();
 
-      this.game.lives--;
-      if (this.game.lives <= 0) {
-        this.game.lives = 4;
-        this.scene.stop();
-        this.scene.start("start");
-      } else {
-        this.scene.restart();
-      }
+      const explosionSprite = this.add.sprite(nv.x, nv.y, "explosion");
+      explosionSprite.play("explosion");
+
+      explosionSprite.on("animationcomplete", () => {
+        this.nv.enableBody(true);
+
+        this.game.lives--;
+        if (this.game.lives <= 0) {
+          this.game.lives = 4;
+          this.scene.stop();
+          this.scene.start("start");
+        } else {
+          this.scene.restart();
+        }
+      })
+
     });
 
     let counter = 60
