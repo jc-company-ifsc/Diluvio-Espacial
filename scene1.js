@@ -18,7 +18,7 @@ class scene1 extends Phaser.Scene {
     this.load.image('Trees', 'assets/fase 2/jogo boi/FreePlatformerNA/Foreground/Trees.png');
     this.load.image('SuperMarioBrosMap5-3', 'assets/SuperMarioBrosMap5-3.png');
     this.load.image('props2', 'assets/fase 2/jogo boi/Diluvio-Espacial-main/Assets/Caverna/props2.png');
-    this.load.spritesheet("vd", "assets/personagens/Astronaut_Idle (1).png", {
+    this.load.spritesheet("vd", "assets/personagens/az.png", {
       frameWidth: 64,
       frameHeight: 64,
     });

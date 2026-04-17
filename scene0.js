@@ -25,6 +25,8 @@ class scene0 extends Phaser.Scene {
       frameHeight: 48,
     });
 
+    this.load.image("vida", "assets/fase4/vida.png");
+
     this.load.plugin(
       "rexvirtualjoystickplugin",
       "./rexvirtualjoystickplugin.min.js",
@@ -55,6 +57,18 @@ class scene0 extends Phaser.Scene {
     this.nv.play("flying");
     this.nv.setCollideWorldBounds(true);
     this.canShoot = true;
+
+    // Inicializar vidas
+    if (!this.game.lives) {
+      this.game.lives = 4;
+    }
+
+    // Criar sprites das vidas
+    this.livesSprites = this.add.group();
+    this.livesSprites.clear(true, true);
+    for (let i = 0; i < this.game.lives; i++) {
+      this.livesSprites.create(50 + i * 18, 15, "vida").setScale(0.5);
+    }
 
     this.anims.create({
       key: "laser-spinning",
@@ -167,9 +181,38 @@ class scene0 extends Phaser.Scene {
       this.music.stop();
       this.explosion.play();
 
-      this.scene.stop();
-      this.scene.restart();
+      this.game.lives--;
+      if (this.game.lives <= 0) {
+        this.game.lives = 4;
+        this.scene.stop();
+        this.scene.start("start");
+      } else {
+        this.scene.restart();
+      }
     });
+
+    let counter = 60
+    this.timeText = this.add.text(10, 10, counter, {
+      fontSize: "16px",
+      fill: "#ffffff",
+    }).setDepth(999)
+    const timeCountdown = setInterval(() => {
+      counter--
+      if (this.timeText) {
+        this.timeText.setText(counter)
+      }
+
+      if (counter === 0) {
+        clearInterval(timeCountdown);
+        this.game.lives = 4; // Resetar vidas
+        this.scene.stop()
+        this.scene.start("start");
+      }
+    }, 1000);
+
+    // Limpar o interval quando a cena for destruída
+    this.events.on('shutdown', () => clearInterval(timeCountdown));
+
   }
 
   update() {
@@ -183,7 +226,7 @@ class scene0 extends Phaser.Scene {
         "asteroids",
         Math.floor(Math.random() * 3),
       );
-      asteroid.setVelocity(0, Phaser.Math.Between(65, 90));
+      asteroid.setVelocity(0, Phaser.Math.Between(90, 115));
       this.newAsteroid = false;
 
       this.time.addEvent({
