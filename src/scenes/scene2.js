@@ -5,18 +5,18 @@ class scene2 extends Phaser.Scene {
 
   preload() {
     this.load.tilemapTiledJSON('map', 'assets/fase 2/tiled4.json');
-    this.load.image('background3', 'assets/fase 2/jogo boi/Diluvio-Espacial-main/Assets/Caverna/background3.png');
-    this.load.image('background4a', 'assets/fase 2/jogo boi/Diluvio-Espacial-main/Assets/Caverna/background4a.png');
-    this.load.image('background1', 'assets/fase 2/jogo boi/Diluvio-Espacial-main/Assets/Caverna/background1.png');
-    this.load.image('mainlev_build', 'assets/fase 2/jogo boi/Diluvio-Espacial-main/Assets/Caverna/mainlev_build.png');
-    this.load.image('props1', 'assets/fase 2/jogo boi/Diluvio-Espacial-main/Assets/Caverna/props1.png');
+    this.load.image('background3', 'assets/fase 2/jogo boi/FreePlatformerNA/Background/CloudsBack.png');
+    this.load.image('background4a', 'assets/fase 2/jogo boi/FreePlatformerNA/Background/CloudsFront.png');
+    this.load.image('background1', 'assets/fase 2/jogo boi/FreePlatformerNA/Background/BGFront.png');
+    this.load.image('mainlev_build', 'assets/fase 2/jogo boi/FreePlatformerNA/Foreground/Tileset.png');
+    this.load.image('props1', 'assets/fase 2/jogo boi/FreePlatformerNA/Foreground/TilesExamples.png');
     this.load.image('CloudsBack', 'assets/fase 2/jogo boi/FreePlatformerNA/Background/CloudsBack.png');
     this.load.image('BGFront', 'assets/fase 2/jogo boi/FreePlatformerNA/Background/BGFront.png');
     this.load.image('CloudsFront', 'assets/fase 2/jogo boi/FreePlatformerNA/Background/CloudsFront.png');
     this.load.image('Tileset', 'assets/fase 2/jogo boi/FreePlatformerNA/Foreground/Tileset.png');
     this.load.image('TilesExamples', 'assets/fase 2/jogo boi/FreePlatformerNA/Foreground/TilesExamples.png');
     this.load.image('Trees', 'assets/fase 2/jogo boi/FreePlatformerNA/Foreground/Trees.png');
-    this.load.image('props2', 'assets/fase 2/jogo boi/Diluvio-Espacial-main/Assets/Caverna/props2.png');
+    this.load.image('props2', 'assets/fase 2/jogo boi/FreePlatformerNA/Foreground/Trees.png');
     this.load.spritesheet("vd", "assets/personagens/az.png", {
       frameWidth: 64,
       frameHeight: 64,
@@ -62,12 +62,14 @@ class scene2 extends Phaser.Scene {
 
     this.cursors = this.input.keyboard.createCursorKeys();
 
-    this.anims.create({
-      key: "walk",
-      frames: this.anims.generateFrameNumbers("vd", { start: 0, end: 3 }),
-      frameRate: 10,
-      repeat: -1,
-    });
+    if (!this.anims.exists("walk")) {
+      this.anims.create({
+        key: "walk",
+        frames: this.anims.generateFrameNumbers("vd", { start: 0, end: 3 }),
+        frameRate: 10,
+        repeat: -1,
+      });
+    }
 
     this.add
       .text(10, 10, "Cena 1", {
