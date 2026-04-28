@@ -38,11 +38,16 @@ class scene2 extends Phaser.Scene {
     const TilesExamples = map.addTilesetImage('TilesExamples', 'TilesExamples');
     const Trees = map.addTilesetImage('Trees', 'Trees');
     const props2 = map.addTilesetImage('props2', 'props2');
+    const tilesets = [background3, background4a, background1, mainlev_build, props1, CloudsBack, BGFront, CloudsFront, Tileset, TilesExamples, props2].filter(Boolean);
 
     map.createLayer('fundo 0', [background3, background4a, background1, mainlev_build, props1, CloudsBack, BGFront, CloudsFront, Tileset, TilesExamples, Trees, props2], 0, 0);
     map.createLayer('fundo 1', [background3, background4a, background1, mainlev_build, props1, CloudsBack, BGFront, CloudsFront, Tileset, TilesExamples, Trees, props2], 0, 0);
     map.createLayer('fundo 2', [background3, background4a, background1, mainlev_build, props1, CloudsBack, BGFront, CloudsFront, Tileset, TilesExamples, Trees, props2], 0, 0);
     const terra = map.createLayer('terra', [background3, background4a, background1, mainlev_build, props1, CloudsBack, BGFront, CloudsFront, Tileset, TilesExamples, Trees, props2], 0, 0);
+    map.createLayer('fundo 0', tilesets, 0, 0);
+    map.createLayer('fundo 1', tilesets, 0, 0);
+    map.createLayer('fundo 2', tilesets, 0, 0);
+    const terra = map.createLayer('terra', tilesets, 0, 0);
 
     terra.setCollisionByExclusion([-1]);
 
@@ -68,43 +73,3 @@ class scene2 extends Phaser.Scene {
     });
 
     this.add
-      .text(10, 10, "Cena 1", {
-        fontSize: "12px",
-        fill: "#ffffff",
-        backgroundColor: "#000000",
-        padding: { x: 5, y: 5 },
-      })
-      .setScrollFactor(0)
-      .setInteractive()
-      .on("pointerdown", () => {
-        this.scene.start("scene1");
-      });
-  }
-
-  update() {
-    const speed = 140;
-    let vx = 0;
-
-    if (this.cursors.left.isDown) {
-      vx = -speed;
-      this.player.setFlipX(true);
-    } else if (this.cursors.right.isDown) {
-      vx = speed;
-      this.player.setFlipX(false);
-    }
-
-    this.player.setVelocityX(vx);
-
-    if (this.cursors.up.isDown && this.player.body.onFloor()) {
-      this.player.setVelocityY(-200);
-    }
-
-    if (vx !== 0) {
-      this.player.anims.play("walk", true);
-    } else {
-      this.player.anims.stop();
-    }
-  }
-}
-
-export default scene2;
