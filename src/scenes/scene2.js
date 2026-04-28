@@ -1,6 +1,6 @@
-class scene1 extends Phaser.Scene {
+class scene2 extends Phaser.Scene {
   constructor() {
-    super("scene1");
+    super("scene2");
   }
 
   preload() {
@@ -39,9 +39,9 @@ class scene1 extends Phaser.Scene {
     const Trees = map.addTilesetImage('Trees', 'Trees');
     const props2 = map.addTilesetImage('props2', 'props2');
 
-    const fundo0 = map.createLayer('fundo 0', [background3, background4a, background1, mainlev_build, props1, CloudsBack, BGFront, CloudsFront, Tileset, TilesExamples, Trees, props2], 0, 0);
-    const fundo1 = map.createLayer('fundo 1', [background3, background4a, background1, mainlev_build, props1, CloudsBack, BGFront, CloudsFront, Tileset, TilesExamples, Trees, props2], 0, 0);
-    const fundo2 = map.createLayer('fundo 2', [background3, background4a, background1, mainlev_build, props1, CloudsBack, BGFront, CloudsFront, Tileset, TilesExamples, Trees, props2], 0, 0);
+    map.createLayer('fundo 0', [background3, background4a, background1, mainlev_build, props1, CloudsBack, BGFront, CloudsFront, Tileset, TilesExamples, Trees, props2], 0, 0);
+    map.createLayer('fundo 1', [background3, background4a, background1, mainlev_build, props1, CloudsBack, BGFront, CloudsFront, Tileset, TilesExamples, Trees, props2], 0, 0);
+    map.createLayer('fundo 2', [background3, background4a, background1, mainlev_build, props1, CloudsBack, BGFront, CloudsFront, Tileset, TilesExamples, Trees, props2], 0, 0);
     const terra = map.createLayer('terra', [background3, background4a, background1, mainlev_build, props1, CloudsBack, BGFront, CloudsFront, Tileset, TilesExamples, Trees, props2], 0, 0);
 
     terra.setCollisionByExclusion([-1]);
@@ -49,7 +49,7 @@ class scene1 extends Phaser.Scene {
     this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
     this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 
-    this.player = this.physics.add.sprite(160, 1120, "vd", 0);
+    this.player = this.physics.add.sprite(160, 100, "vd", 0);
     this.player.setCollideWorldBounds(false);
     this.player.body.setSize(24, 28).setOffset(20, 20);
     this.player.setGravityY(300);
@@ -68,7 +68,7 @@ class scene1 extends Phaser.Scene {
     });
 
     this.add
-      .text(10, 10, "Cena 2", {
+      .text(10, 10, "Cena 1", {
         fontSize: "12px",
         fill: "#ffffff",
         backgroundColor: "#000000",
@@ -77,7 +77,7 @@ class scene1 extends Phaser.Scene {
       .setScrollFactor(0)
       .setInteractive()
       .on("pointerdown", () => {
-        this.scene.start("scene2");
+        this.scene.start("scene1");
       });
   }
 
@@ -107,4 +107,4 @@ class scene1 extends Phaser.Scene {
   }
 }
 
-export default scene1;
+export default scene2;
