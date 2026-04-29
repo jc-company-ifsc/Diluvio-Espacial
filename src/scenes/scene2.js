@@ -40,10 +40,6 @@ class scene2 extends Phaser.Scene {
     const props2 = map.addTilesetImage('props2', 'props2');
     const tilesets = [background3, background4a, background1, mainlev_build, props1, CloudsBack, BGFront, CloudsFront, Tileset, TilesExamples, props2].filter(Boolean);
 
-    map.createLayer('fundo 0', [background3, background4a, background1, mainlev_build, props1, CloudsBack, BGFront, CloudsFront, Tileset, TilesExamples, Trees, props2], 0, 0);
-    map.createLayer('fundo 1', [background3, background4a, background1, mainlev_build, props1, CloudsBack, BGFront, CloudsFront, Tileset, TilesExamples, Trees, props2], 0, 0);
-    map.createLayer('fundo 2', [background3, background4a, background1, mainlev_build, props1, CloudsBack, BGFront, CloudsFront, Tileset, TilesExamples, Trees, props2], 0, 0);
-    const terra = map.createLayer('terra', [background3, background4a, background1, mainlev_build, props1, CloudsBack, BGFront, CloudsFront, Tileset, TilesExamples, Trees, props2], 0, 0);
     map.createLayer('fundo 0', tilesets, 0, 0);
     map.createLayer('fundo 1', tilesets, 0, 0);
     map.createLayer('fundo 2', tilesets, 0, 0);
@@ -71,5 +67,27 @@ class scene2 extends Phaser.Scene {
       frameRate: 10,
       repeat: -1,
     });
+  }
 
-    this.add
+  update() {
+    this.player.setVelocityX(0);
+
+    if (this.cursors.left.isDown) {
+      this.player.setVelocityX(-200);
+      this.player.play("walk", true);
+    } else if (this.cursors.right.isDown) {
+      this.player.setVelocityX(200);
+      this.player.play("walk", true);
+    } else {
+      this.player.stop();
+    }
+
+    if (this.cursors.up.isDown && this.player.body.touching.down) {
+      this.player.setVelocityY(-330);
+    }
+  }
+}
+
+export default scene2;
+
+this.add
