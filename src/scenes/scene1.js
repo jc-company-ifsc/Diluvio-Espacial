@@ -46,8 +46,17 @@ class scene1 extends Phaser.Scene {
     const tetoFase1 = map.createLayer('Teto - Fase 1', tilesets, 0, 0);
     const casaFimFase = map.createLayer('Casa fim de fase', tilesets, 0, 0);
     const plataforma = map.createLayer('Plataforma', tilesets, 0, 0);
+    const casaFimFase = map.createLayer('Casa fim de fase', tilesets, 0, 0);
 
     plataforma.setCollisionByExclusion([-1]);
+    // Remove colisão de tiles específicos da "Casa fim de fase" (rocha com porta)
+    casaFimFase.setCollisionByProperty({ collides: true });
+    casaFimFase.forEachTile(tile => {
+      // Remove colisão dos tiles com IDs da rocha com porta (8678, 8679, 8680)
+      if ([8678, 8679, 8680].includes(tile.index)) {
+        tile.setCollision(false, false, false, false);
+      }
+    });
 
     this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
     this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
