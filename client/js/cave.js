@@ -49,9 +49,8 @@ class cave extends Phaser.Scene {
       this.map.heightInPixels,
     );
 
-    // CORREÇÃO: O eixo Y foi ajustado de 300 para 335 para nascerem direto no chão
-    this.spawnPoint = { x: 350, y: 335 };
-    
+    // ALTERAÇÃO AQUI: Valor de Y aumentado para 380 (mais para baixo)
+    this.spawnPoint = { x: 350, y: 380 };
     this.player = this.physics.add.sprite(
       this.spawnPoint.x,
       this.spawnPoint.y,
