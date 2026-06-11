@@ -45,7 +45,9 @@ class scene2 extends Phaser.Scene {
     this.music.play();
 
     this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+    this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
     this.levelHeight = map.heightInPixels;
+    this.levelWidth = map.widthInPixels;
 
     this.playerSpeed = 200;
     this.playerJump = -520;
@@ -58,7 +60,9 @@ class scene2 extends Phaser.Scene {
       0,
     );
     this.player.setCollideWorldBounds(true);
-    this.player.body.setSize(20, 46).setOffset(22, 16);
+    
+    // Hitbox idêntica à do cave.js
+    this.player.body.setSize(16, 32).setOffset(26, 32);
     this.player.setGravityY(850);
     this.player.setBounce(0);
 
@@ -67,8 +71,6 @@ class scene2 extends Phaser.Scene {
 
     porta.setCollisionByProperty({ collides: true });
     this.physics.add.collider(this.player, porta);
-
-    // Câmera seguirá o ponto médio entre os dois jogadores (será atualizada no update)
 
     this.pad = this.input.gamepad.gamepads[0] || null;
     this.pad2 = this.input.gamepad.gamepads[1] || null;
@@ -109,15 +111,17 @@ class scene2 extends Phaser.Scene {
       });
     }
 
-    // Criar segundo jogador
+    // Criar segundo jogador com spawn alterado para menos 50 no eixo X
     this.player2 = this.physics.add.sprite(
-      this.spawnPoint.x + 100,
+      this.spawnPoint.x - 50,
       this.spawnPoint.y,
       "vd",
       0,
     );
     this.player2.setCollideWorldBounds(true);
-    this.player2.body.setSize(20, 46).setOffset(22, 16);
+    
+    // Hitbox idêntica à do cave.js
+    this.player2.body.setSize(16, 32).setOffset(26, 32);
     this.player2.setGravityY(850);
     this.player2.setBounce(0);
 
@@ -146,14 +150,6 @@ class scene2 extends Phaser.Scene {
     this.physics.add.collider(this.player2, porta);
 
     this.cameras.main.centerOn(this.spawnPoint.x, this.spawnPoint.y);
-    this.time.addEvent({
-      delay: 25,
-      callback: () => {
-        this.cameras.main.scrollX += 1;
-      },
-      callbackScope: this,
-      loop: true,
-    });
 
     // Criar animações dos animais
     if (!this.anims.exists("cinza_anim")) {
@@ -204,7 +200,6 @@ class scene2 extends Phaser.Scene {
     this.collectedAnimals = 0;
     this.animalTypes = {};
 
-    // Dados dos animais com suas posições
     const animalData = [
       { x: 1056, y: 1264, type: "cinza" },
       { x: 592, y: 1232, type: "esquilo" },
@@ -222,7 +217,6 @@ class scene2 extends Phaser.Scene {
       animal.setScale(0.8);
       animal.animalType = data.type;
 
-      // Tocar animação correspondente ao tipo de animal
       const animKey = `${data.type}_anim`;
       animal.play(animKey, true);
     });
@@ -249,10 +243,8 @@ class scene2 extends Phaser.Scene {
       this,
     );
 
-    // Resetar vidas para a fase
     this.game.lives = this.game.initialLives;
 
-    // Criar sprites das vidas
     this.livesSprites = this.add.group();
     this.livesSprites.clear(true, true);
     for (let i = 0; i < this.game.lives; i++) {
@@ -265,7 +257,6 @@ class scene2 extends Phaser.Scene {
   }
 
   update() {
-    // Reiniciar o jogo se o jogador cair abaixo de Y = 1392
     if (this.player.y > 1392) {
       this.respawnPlayer();
       return;
@@ -276,7 +267,6 @@ class scene2 extends Phaser.Scene {
       return;
     }
 
-    // Movement logic unified with `cave` scene
     const pad =
       this.input.gamepad.total > 0 ? this.input.gamepad.gamepads[0] : null;
     let xAxis = 0;
@@ -312,7 +302,6 @@ class scene2 extends Phaser.Scene {
       this.sound.play("pulo");
     }
 
-    // Controles do player 2 (gamepad ou A/D + W/Space/Enter)
     const pad2 =
       this.input.gamepad.total > 1 ? this.input.gamepad.gamepads[1] : null;
     let xAxis2 = 0;
@@ -347,10 +336,49 @@ class scene2 extends Phaser.Scene {
       this.player2.setVelocityY(this.playerJump);
       this.sound.play("pulo");
     }
+
+    // Mecânica de câmera compartilhada
+    if (this.player && this.player2) {
+      const cameraX = (this.player.x + this.player2.x) / 2;
+      const cameraY = (this.player.y + this.player2.y) / 2;
+
+      const cameraWidth = this.cameras.main.width;
+      const cameraHeight = this.cameras.main.height;
+
+      const minX = cameraWidth / 2;
+      const maxX = this.levelWidth - cameraWidth / 2;
+      const minY = cameraHeight / 2;
+      const maxY = this.levelHeight - cameraHeight / 2;
+
+      const constrainedX = Phaser.Math.Clamp(cameraX, minX, maxX);
+      const constrainedY = Phaser.Math.Clamp(cameraY, minY, maxY);
+
+      this.cameras.main.centerOn(constrainedX, constrainedY);
+
+      const cameraLeftBound = constrainedX - cameraWidth / 2;
+      const cameraRightBound = constrainedX + cameraWidth / 2;
+
+      const playerWidth = this.player.width / 2;
+
+      if (this.player.x - playerWidth < cameraLeftBound) {
+        this.player.x = cameraLeftBound + playerWidth;
+        this.player.setVelocityX(0);
+      } else if (this.player.x + playerWidth > cameraRightBound) {
+        this.player.x = cameraRightBound - playerWidth;
+        this.player.setVelocityX(0);
+      }
+
+      if (this.player2.x - playerWidth < cameraLeftBound) {
+        this.player2.x = cameraLeftBound + playerWidth;
+        this.player2.setVelocityX(0);
+      } else if (this.player2.x + playerWidth > cameraRightBound) {
+        this.player2.x = cameraRightBound - playerWidth;
+        this.player2.setVelocityX(0);
+      }
+    }
   }
 
   resetBothPlayers() {
-    // Atualizar sprites de vidas
     this.livesSprites.clear(true, true);
     for (let i = 0; i < this.game.lives; i++) {
       this.livesSprites
@@ -360,15 +388,14 @@ class scene2 extends Phaser.Scene {
         .setScrollFactor(0);
     }
 
-    // Resetar ambos os jogadores
     this.player.setPosition(this.spawnPoint.x, this.spawnPoint.y);
     this.player.setVelocity(0, 0);
 
-    this.player2.setPosition(this.spawnPoint.x + 100, this.spawnPoint.y);
+    // Ajustado também no reset para manter a consistência de menos 50
+    this.player2.setPosition(this.spawnPoint.x - 50, this.spawnPoint.y);
     this.player2.setVelocity(0, 0);
 
     this.cameras.main.centerOn(this.spawnPoint.x, this.spawnPoint.y);
-    this.cameras.main.scrollX = 290;
   }
 
   respawnPlayer() {
@@ -398,7 +425,6 @@ class scene2 extends Phaser.Scene {
   }
 
   collectAnimal(animal) {
-    // Contar o tipo de animal
     const type = animal.animalType;
     if (!this.animalTypes[type]) {
       this.animalTypes[type] = 0;
@@ -412,11 +438,9 @@ class scene2 extends Phaser.Scene {
       `${type} coletado! Total: ${this.collectedAnimals}/${this.totalAnimals}`,
     );
 
-    // Verificar se todos foram coletados
     if (this.collectedAnimals === this.totalAnimals) {
       console.log("Todos os animais foram coletados!");
 
-      // Aguardar um pouco e transicionar para scene3
       this.time.delayedCall(1000, () => {
         this.music.stop();
         this.scene.stop();

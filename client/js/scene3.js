@@ -41,7 +41,9 @@ class scene3 extends Phaser.Scene {
     this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
     this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
     this.levelHeight = map.heightInPixels;
-    this.winZoneY = 100; // Zona de vitória no topo
+    
+    // ALTERADO: Agora define a zona de vitória no eixo X
+    this.winZoneX = 2600; 
 
     this.playerSpeed = 200;
     this.playerJump = -520;
@@ -75,7 +77,9 @@ class scene3 extends Phaser.Scene {
       0,
     );
     this.player.setCollideWorldBounds(true);
-    this.player.body.setSize(20, 46).setOffset(22, 16);
+    
+    // MANTIDO: Hitbox idêntica à do cave.js
+    this.player.body.setSize(16, 32).setOffset(26, 32);
     this.player.setGravityY(850);
     this.player.setBounce(0);
 
@@ -87,8 +91,6 @@ class scene3 extends Phaser.Scene {
       plataformas3.setCollisionByExclusion([-1]);
     }
     this.physics.add.collider(this.player, plataformas3);
-
-    // Câmera seguirá o ponto médio entre os dois jogadores (será atualizada no update)
 
     this.pad = this.input.gamepad.gamepads[0] || null;
     this.pad2 = this.input.gamepad.gamepads[1] || null;
@@ -137,7 +139,9 @@ class scene3 extends Phaser.Scene {
       0,
     );
     this.player2.setCollideWorldBounds(true);
-    this.player2.body.setSize(20, 46).setOffset(22, 16);
+    
+    // MANTIDO: Hitbox idêntica à do cave.js
+    this.player2.body.setSize(16, 32).setOffset(26, 32);
     this.player2.setGravityY(850);
     this.player2.setBounce(0);
 
@@ -187,15 +191,19 @@ class scene3 extends Phaser.Scene {
     // Inicializar meteoros com sistema dinâmico
     this.asteroids = this.physics.add.group();
     this.newAsteroid = true;
-    this.asteroidMinSpeed = 100;
-    this.asteroidMaxSpeed = 200;
-    this.asteroidMinSpawnInterval = 1000;
-    this.asteroidMaxSpawnInterval = 2500;
+    
+    // MANTIDO: Velocidade de queda aumentada
+    this.asteroidMinSpeed = 150;
+    this.asteroidMaxSpeed = 300;
+
+    // MANTIDO: Frequência alta de spawn dos meteoros
+    this.asteroidMinSpawnInterval = 500;
+    this.asteroidMaxSpawnInterval = 1500;
     this.asteroidHorizontalSpeed = 100;
 
     // Definir zonas de segurança (onde não spawnam meteoros)
-    this.safeZoneTopHeight = 500; // Zona de segurança no começo (primeiros 500px)
-    this.safeZoneBottomHeight = 500; // Zona de segurança no final (últimos 500px)
+    this.safeZoneTopHeight = 500;
+    this.safeZoneBottomHeight = 500;
 
     this.physics.add.overlap(
       this.player,
@@ -218,15 +226,15 @@ class scene3 extends Phaser.Scene {
   }
 
   update() {
-    // Verificar se algum jogador venceu a fase (chegou ao topo)
-    if (this.player.y < this.winZoneY || this.player2.y < this.winZoneY) {
+    // ALTERADO: Verificar se algum jogador venceu a fase (chegou ao ponto X especificado)
+    if (this.player.x > this.winZoneX || this.player2.x > this.winZoneX) {
       this.music.stop();
       this.scene.stop();
       this.scene.start("cutscene", { list: [6], nextScene: "asteroids" });
       return;
     }
 
-    // Reiniciar o jogo se o jogador cair abaixo de Y = 2160
+    // Reiniciar o jogo se o jogador caiu abaixo de Y = 2160
     if (this.player.y > 2160) {
       this.respawnPlayer();
       return;
@@ -237,7 +245,7 @@ class scene3 extends Phaser.Scene {
       return;
     }
 
-    // Movement logic unified with `cave` scene
+    // Lógica de movimento unificada com a cena cave
     const pad =
       this.input.gamepad.total > 0 ? this.input.gamepad.gamepads[0] : null;
     let xAxis = 0;
