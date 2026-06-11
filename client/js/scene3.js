@@ -38,11 +38,15 @@ class scene3 extends Phaser.Scene {
     this.music = this.sound.add("aventura_fase_inteira", { loop: true });
     this.music.play();
 
+    // Limites do mundo físicos e visuais
     this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
     this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+    
+    this.mapWidthInPixels = map.widthInPixels;
+    this.mapHeightInPixels = map.heightInPixels;
     this.levelHeight = map.heightInPixels;
     
-    // DEFINIDO: Zona de vitória baseada no eixo X em 2600
+    // Alvo estrito de vitória no eixo X
     this.winZoneX = 2600; 
 
     this.playerSpeed = 200;
@@ -78,7 +82,6 @@ class scene3 extends Phaser.Scene {
     );
     this.player.setCollideWorldBounds(true);
     
-    // HITBOX AJUSTADA: Idêntica à do cave.js
     this.player.body.setSize(16, 32).setOffset(26, 32);
     this.player.setGravityY(850);
     this.player.setBounce(0);
@@ -140,7 +143,6 @@ class scene3 extends Phaser.Scene {
     );
     this.player2.setCollideWorldBounds(true);
     
-    // HITBOX AJUSTADA: Idêntica à do cave.js
     this.player2.body.setSize(16, 32).setOffset(26, 32);
     this.player2.setGravityY(850);
     this.player2.setBounce(0);
@@ -172,9 +174,6 @@ class scene3 extends Phaser.Scene {
     }
     this.physics.add.collider(this.player2, plataformas3);
 
-    this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
-
-    this.pad = this.input.gamepad.gamepads[0] || null;
     this.game.lives = this.game.initialLives;
 
     // Criar sprites das vidas
@@ -188,20 +187,17 @@ class scene3 extends Phaser.Scene {
         .setScrollFactor(0);
     }
 
-    // Inicializar meteoros com sistema dinâmico rápido
+    // Inicializar meteoros com sistema dinâmico
     this.asteroids = this.physics.add.group();
     this.newAsteroid = true;
     
-    // CONFIGURADO: Velocidades maiores para os meteoros
-    this.asteroidMinSpeed = 150;
-    this.asteroidMaxSpeed = 300;
+    this.asteroidMinSpeed = 120;
+    this.asteroidMaxSpeed = 240;
 
-    // CONFIGURADO: Frequência alta de spawn dos meteoros
     this.asteroidMinSpawnInterval = 500;
     this.asteroidMaxSpawnInterval = 1500;
     this.asteroidHorizontalSpeed = 100;
 
-    // Definir zonas de segurança (onde não spawnam meteoros)
     this.safeZoneTopHeight = 500;
     this.safeZoneBottomHeight = 500;
 
@@ -226,7 +222,7 @@ class scene3 extends Phaser.Scene {
   }
 
   update() {
-    // CORRIGIDO: Agora verifica corretamente se algum jogador passou do X = 2600 para vencer
+    // 1. CHECAGEM RESTRITA DE VITÓRIA: Só avança se ultrapassar o eixo X em 2600
     if (this.player.x > this.winZoneX || this.player2.x > this.winZoneX) {
       this.music.stop();
       this.scene.stop();
@@ -234,7 +230,7 @@ class scene3 extends Phaser.Scene {
       return;
     }
 
-    // Reiniciar o jogo se o jogador caiu abaixo de Y = 2160
+    // 2. VERIFICAÇÃO DE QUEDA NO ABISMO (Eixo Y): Executa apenas o respawn e interrompe o update
     if (this.player.y > 2160) {
       this.respawnPlayer();
       return;
@@ -245,7 +241,7 @@ class scene3 extends Phaser.Scene {
       return;
     }
 
-    // Lógica de movimento unificada com a cena cave
+    // Lógica de movimento Player 1
     const pad =
       this.input.gamepad.total > 0 ? this.input.gamepad.gamepads[0] : null;
     let xAxis = 0;
@@ -281,7 +277,7 @@ class scene3 extends Phaser.Scene {
       this.sound.play("pulo");
     }
 
-    // Controles do player 2 (gamepad ou A/D + W/Space/Enter)
+    // Controles do player 2
     const pad2 =
       this.input.gamepad.total > 1 ? this.input.gamepad.gamepads[1] : null;
     let xAxis2 = 0;
@@ -324,12 +320,10 @@ class scene3 extends Phaser.Scene {
         this.cameras.main.worldView.x + this.cameras.main.worldView.width;
       const cameraTop = this.cameras.main.worldView.y;
 
-      // Verificar se está em zona de segurança
       const isInTopSafeZone = cameraTop < this.safeZoneTopHeight;
       const isInBottomSafeZone =
         cameraTop > this.levelHeight - this.safeZoneBottomHeight;
 
-      // Só spawnar se NÃO estiver em zona de segurança
       if (!isInTopSafeZone && !isInBottomSafeZone) {
         const x = Phaser.Math.Between(cameraLeft, cameraRight);
 
@@ -375,10 +369,49 @@ class scene3 extends Phaser.Scene {
         this.asteroids.remove(asteroid, true, true);
       }
     });
+
+    // Câmera por Ponto Médio e Paredes de Tela Originais (Preservadas)
+    if (this.player && this.player2) {
+      const cameraX = (this.player.x + this.player2.x) / 2;
+      const cameraY = (this.player.y + this.player2.y) / 2;
+
+      const cameraWidth = this.cameras.main.width;
+      const cameraHeight = this.cameras.main.height;
+
+      const minX = cameraWidth / 2;
+      const maxX = this.mapWidthInPixels - cameraWidth / 2;
+      const minY = cameraHeight / 2;
+      const maxY = this.mapHeightInPixels - cameraHeight / 2;
+
+      const constrainedX = Phaser.Math.Clamp(cameraX, minX, maxX);
+      const constrainedY = Phaser.Math.Clamp(cameraY, minY, maxY);
+
+      this.cameras.main.centerOn(constrainedX, constrainedY);
+
+      const cameraLeftBound = constrainedX - cameraWidth / 2;
+      const cameraRightBound = constrainedX + cameraWidth / 2;
+
+      const playerWidth = this.player.width / 2;
+
+      if (this.player.x - playerWidth < cameraLeftBound) {
+        this.player.x = cameraLeftBound + playerWidth;
+        this.player.setVelocityX(0);
+      } else if (this.player.x + playerWidth > cameraRightBound) {
+        this.player.x = cameraRightBound - playerWidth;
+        this.player.setVelocityX(0);
+      }
+
+      if (this.player2.x - playerWidth < cameraLeftBound) {
+        this.player2.x = cameraLeftBound + playerWidth;
+        this.player2.setVelocityX(0);
+      } else if (this.player2.x + playerWidth > cameraRightBound) {
+        this.player2.x = cameraRightBound - playerWidth;
+        this.player2.setVelocityX(0);
+      }
+    }
   }
 
   resetBothPlayers() {
-    // Atualizar sprites de vidas
     this.livesSprites.clear(true, true);
     for (let i = 0; i < this.game.lives; i++) {
       this.livesSprites
@@ -388,7 +421,6 @@ class scene3 extends Phaser.Scene {
         .setScrollFactor(0);
     }
 
-    // CORRIGIDO: Posição Y reduzida em 20 pixels para nascerem no ar e não dentro das plataformas
     this.player.setPosition(this.spawnPoint.x, this.spawnPoint.y - 20);
     this.player.setVelocity(0, 0);
 
@@ -416,7 +448,7 @@ class scene3 extends Phaser.Scene {
       this.game.lives = this.game.initialLives;
       this.scene.stop();
       this.music.stop();
-      this.scene.start("cutscene", { list: [6], nextScene: "asteroids" });
+      this.scene.start("start");
     } else {
       this.resetBothPlayers();
     }

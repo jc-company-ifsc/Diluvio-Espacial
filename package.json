@@ -1,5 +1,8 @@
 {
   "scripts": {
     "start": "npx -y http-server client -p 8080"
+  },
+  "dependencies": {
+    "sharp": "^0.35.0"
   }
 }
