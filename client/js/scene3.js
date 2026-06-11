@@ -42,7 +42,7 @@ class scene3 extends Phaser.Scene {
     this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
     this.levelHeight = map.heightInPixels;
     
-    // ALTERADO: Agora define a zona de vitória no eixo X
+    // DEFINIDO: Zona de vitória baseada no eixo X em 2600
     this.winZoneX = 2600; 
 
     this.playerSpeed = 200;
@@ -78,7 +78,7 @@ class scene3 extends Phaser.Scene {
     );
     this.player.setCollideWorldBounds(true);
     
-    // MANTIDO: Hitbox idêntica à do cave.js
+    // HITBOX AJUSTADA: Idêntica à do cave.js
     this.player.body.setSize(16, 32).setOffset(26, 32);
     this.player.setGravityY(850);
     this.player.setBounce(0);
@@ -140,7 +140,7 @@ class scene3 extends Phaser.Scene {
     );
     this.player2.setCollideWorldBounds(true);
     
-    // MANTIDO: Hitbox idêntica à do cave.js
+    // HITBOX AJUSTADA: Idêntica à do cave.js
     this.player2.body.setSize(16, 32).setOffset(26, 32);
     this.player2.setGravityY(850);
     this.player2.setBounce(0);
@@ -188,15 +188,15 @@ class scene3 extends Phaser.Scene {
         .setScrollFactor(0);
     }
 
-    // Inicializar meteoros com sistema dinâmico
+    // Inicializar meteoros com sistema dinâmico rápido
     this.asteroids = this.physics.add.group();
     this.newAsteroid = true;
     
-    // MANTIDO: Velocidade de queda aumentada
+    // CONFIGURADO: Velocidades maiores para os meteoros
     this.asteroidMinSpeed = 150;
     this.asteroidMaxSpeed = 300;
 
-    // MANTIDO: Frequência alta de spawn dos meteoros
+    // CONFIGURADO: Frequência alta de spawn dos meteoros
     this.asteroidMinSpawnInterval = 500;
     this.asteroidMaxSpawnInterval = 1500;
     this.asteroidHorizontalSpeed = 100;
@@ -226,7 +226,7 @@ class scene3 extends Phaser.Scene {
   }
 
   update() {
-    // ALTERADO: Verificar se algum jogador venceu a fase (chegou ao ponto X especificado)
+    // CORRIGIDO: Agora verifica corretamente se algum jogador passou do X = 2600 para vencer
     if (this.player.x > this.winZoneX || this.player2.x > this.winZoneX) {
       this.music.stop();
       this.scene.stop();
@@ -388,11 +388,11 @@ class scene3 extends Phaser.Scene {
         .setScrollFactor(0);
     }
 
-    // Resetar ambos os jogadores
-    this.player.setPosition(this.spawnPoint.x, this.spawnPoint.y);
+    // CORRIGIDO: Posição Y reduzida em 20 pixels para nascerem no ar e não dentro das plataformas
+    this.player.setPosition(this.spawnPoint.x, this.spawnPoint.y - 20);
     this.player.setVelocity(0, 0);
 
-    this.player2.setPosition(this.spawnPoint.x + 50, this.spawnPoint.y);
+    this.player2.setPosition(this.spawnPoint.x + 50, this.spawnPoint.y - 20);
     this.player2.setVelocity(0, 0);
   }
 
