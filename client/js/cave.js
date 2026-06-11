@@ -49,7 +49,9 @@ class cave extends Phaser.Scene {
       this.map.heightInPixels,
     );
 
-    this.spawnPoint = { x: 350, y: 300 };
+    // CORREÇÃO: O eixo Y foi ajustado de 300 para 335 para nascerem direto no chão
+    this.spawnPoint = { x: 350, y: 335 };
+    
     this.player = this.physics.add.sprite(
       this.spawnPoint.x,
       this.spawnPoint.y,
@@ -474,7 +476,7 @@ class cave extends Phaser.Scene {
         .setScrollFactor(0);
     }
 
-    // Resetar ambos os jogadores
+    // Resetar ambos os jogadores (usando o this.spawnPoint atualizado)
     this.player.setPosition(this.spawnPoint.x, this.spawnPoint.y);
     this.player.setVelocity(0, 0);
     this.player.play("stopped", true);

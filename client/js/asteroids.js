@@ -42,18 +42,8 @@ class asteroids extends Phaser.Scene {
     this.nv.setCollideWorldBounds(true);
     this.canShoot = true;
 
-    // Resetar vidas para a fase
-    this.game.lives = this.game.initialLives;
-
-    // Criar sprites das vidas
     this.livesSprites = this.add.group();
-    this.livesSprites.clear(true, true);
-    for (let i = 0; i < this.game.lives; i++) {
-      this.livesSprites
-        .create(50 + i * 18, 15, "vida")
-        .setScale(0.5)
-        .setDepth(999);
-    }
+    this.refreshLivesDisplay();
 
     if (!this.anims.exists("laser-spinning")) {
       this.anims.create({
@@ -127,10 +117,12 @@ class asteroids extends Phaser.Scene {
         this.nv.enableBody(true);
 
         this.game.lives--;
+        this.refreshLivesDisplay();
         if (this.game.lives <= 0) {
-          this.game.lives = 4;
+          this.game.lives = this.game.initialLives;
           this.scene.stop();
-          this.scene.start("gameover");
+          this.music.stop();
+          this.scene.start("start");
         } else {
           this.scene.restart();
         }
@@ -250,6 +242,17 @@ class asteroids extends Phaser.Scene {
         this.asteroids.remove(asteroid, true, true);
       }
     });
+  }
+
+  refreshLivesDisplay() {
+    this.livesSprites.clear(true, true);
+
+    for (let i = 0; i < this.game.lives; i++) {
+      this.livesSprites
+        .create(50 + i * 18, 15, "vida")
+        .setScale(0.5)
+        .setDepth(999);
+    }
   }
 }
 
