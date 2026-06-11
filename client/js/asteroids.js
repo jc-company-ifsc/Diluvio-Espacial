@@ -147,7 +147,11 @@ class asteroids extends Phaser.Scene {
         clearInterval(timeCountdown);
         this.game.lives = this.game.initialLives; // Resetar vidas
         this.scene.stop();
-        this.scene.start("cutscene", { list: [7], nextScene: "creditos" });
+        this.scene.start("cutscene", {
+          list: [7],
+          nextScene: "creditos",
+          cutsceneDelay: 8000,
+        });
       }
     }, 1000);
 

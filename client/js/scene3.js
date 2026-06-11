@@ -194,8 +194,9 @@ class scene3 extends Phaser.Scene {
     this.asteroidMinSpeed = 120;
     this.asteroidMaxSpeed = 240;
 
-    this.asteroidMinSpawnInterval = 500;
-    this.asteroidMaxSpawnInterval = 1500;
+    // AJUSTE: Frequência dos meteoros diminuída (tempo de espera aumentado)
+    this.asteroidMinSpawnInterval = 1200; // Antes era 500
+    this.asteroidMaxSpawnInterval = 2500; // Antes era 1500
     this.asteroidHorizontalSpeed = 100;
 
     this.safeZoneTopHeight = 500;
@@ -226,7 +227,11 @@ class scene3 extends Phaser.Scene {
     if (this.player.x > this.winZoneX || this.player2.x > this.winZoneX) {
       this.music.stop();
       this.scene.stop();
-      this.scene.start("cutscene", { list: [6], nextScene: "asteroids" });
+      this.scene.start("cutscene", {
+        list: [6],
+        nextScene: "asteroids",
+        cutsceneDelay: 8000,
+      });
       return;
     }
 

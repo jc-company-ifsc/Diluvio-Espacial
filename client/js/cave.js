@@ -534,7 +534,11 @@ class cave extends Phaser.Scene {
       this.time.delayedCall(1000, () => {
         this.music.stop();
         this.scene.stop();
-        this.scene.start("cutscene", { list: [4], nextScene: "scene2" });
+        this.scene.start("cutscene", {
+          list: [4],
+          nextScene: "scene2",
+          cutsceneDelay: 8000,
+        });
       });
     }
   }

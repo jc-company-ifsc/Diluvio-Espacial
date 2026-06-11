@@ -4,6 +4,7 @@ class cutscene extends Phaser.Scene {
     this.index = 0;
     this.frames = [];
     this.buttonTimeout = 0;
+    this.cutsceneDelay = 12000;
     this.buttonPressed = false;
     this.timer = null;
     this.fadeDuration = 250;
@@ -15,6 +16,7 @@ class cutscene extends Phaser.Scene {
     this.nextScene = data.nextScene;
     this.index = 0;
     this.buttonTimeout = 500;
+    this.cutsceneDelay = data.cutsceneDelay ?? 12000;
     this.buttonPressed = false;
 
     if (this.timer) {
@@ -37,18 +39,6 @@ class cutscene extends Phaser.Scene {
     }
 
     this.scheduleNextFrame();
-
-    this.input.keyboard.on("keydown-SPACE", () => this.advance(), this);
-    this.input.keyboard.on("keydown-ENTER", () => this.advance(), this);
-    this.input.on("pointerdown", () => this.advance(), this);
-  }
-
-  update() {
-    this.input.gamepad.gamepads.forEach((gamepad) => {
-      if (gamepad && gamepad.buttons[9].pressed && !this.buttonPressed) {
-        this.advance();
-      }
-    });
   }
 
   scheduleNextFrame() {
@@ -57,7 +47,7 @@ class cutscene extends Phaser.Scene {
     }
 
     this.timer = this.time.addEvent({
-      delay: this.buttonTimeout * 10,
+      delay: this.cutsceneDelay,
       callback: () => {
         this.advance();
       },
