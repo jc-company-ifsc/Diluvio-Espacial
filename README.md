@@ -125,16 +125,16 @@ As plataformas ficam estáticas no mapa, mas não possui chão em baixo (se o jo
 #### Captura de Espécies
 ○ Detalhes
 
-Os jogadores precisam avançar pelo cenário horizontal com obstáculos (pulando e tendo agilidade para não cair em uma plataforma instável) e desafios específicos da fase (plataformas clássicas como as da fase anterior, plataformas que se deslocam para cima e para baixo para chegar a um lugar específico, e plataformas instáveis).
+Os jogadores precisam avançar pelo cenário horizontal com obstáculos e desafios específicos da fase (plataformas clássicas como as da fase anterior).
 
 ○ Como funciona
 
-As plataformas ficam estáticas no mapa, mas não possui chão em baixo (se o jogador cair, precisa recomeçar a fase). Os jogadores precisam pular entre as plataformas, pular na plataforma que se desloca para cima ou para baixo para chegar em outra plataforma em outro nível, e ter agilidade quando chegar em uma plataforma instável, que vai caindo à medida que o jogador permanece em cima dela.
+As plataformas ficam estáticas no mapa, mas não possui chão em baixo (se o jogador cair, precisa recomeçar a fase). Os jogadores precisam pular entre as plataformas.
 
 #### Fuga Final
 ○ Detalhes
 
-Fase automática com destruição progressiva do cenário.
+Fase de plataforma com meteoros caindo.
 
 ○ Como funciona
 
@@ -147,71 +147,67 @@ Mudança para gameplay estilo shooter lateral.
 
 ○ Como funciona
 
-Desviar de asteroides e sobreviver até atingir o novo planeta.
+Desviar de asteroides e sobreviver durante 60 segundos.
 
 ### História e jogabilidade
 #### História (Breve)
 Dois seres de outro planeta (fora do sistema solar) recebem uma missão de um ser divino para construírem uma nave espacial, antes que o planeta seja destruído por uma “Chuva de Meteoros”. Além disso, eles ainda precisam ir atrás das demais formas de vida do planeta, para salvá-las da grande destruição iminente.
-Se eles não terminarem tudo a tempo, eles com certeza serão destruídos. Se não completarem toda a missão (e pegarem todas as demais formas de vida do planeta), não poderão se salvar.
+Se eles perderem todas as suas vidas neste meio tempo, eles com certeza serão destruídos. Se não completarem toda a missão (e pegarem todas as demais formas de vida do planeta), não poderão se salvar.
 
 #### História (Detalhada)
-Dois seres do planeta Tevá, um lugar cheio de plantas, árvores e seres vivos, nativos de Tevá, longe do sistema solar, são amigos e vizinhos. Um dia, reunidos na casa de um deles, um ser divino, avisa que o planeta será destruído por uma “Chuva de Meteoros”, e para se salvarem, eles precisariam construir uma nave espacial, e ainda reunir algumas das espécies nativa do planeta para levá-los juntos na nave.
-Para cumprir sua missão, primeiro eles deveriam pegar os materiais necessários para construir a espaçonave. Dentro de uma caverna, eles precisam pular cristais pontudas, enfrentar criaturas perigosas e pedras se deslocando do chão. Se eles morrerem de alguma forma, eles retornam ao começo, iniciando essa jornada de novo.
-Para a segunda parte da missão, eles estão dentro da “selva” no planeta, e precisam enfrentar outros desafios, entre eles plataformas que se deslocam ou ainda instáveis, a fim de pegar cada os demais seres vivos necessários do planeta. Se eles morrerem durante esta missão, eles precisarão voltar ao início dela.
-Finalmente, quando eles estão prestes a ir, os meteoros começam a cair, e eles precisam correr em direção a espaço nave e aos outros seres vivos. No caminho, eles enfrentam plataformas instáveis e os meteoros caindo enquanto avançam e são pressionados pelo tempo. Se forem atingidos, ou demorarem demais durante essa corrida por suas vidas, precisarão retornar ao início. 
-Por fim, eles precisam se desviar dos meteoros que já estavam caindo em Tevá, manobrando a nave espacial por eles. Por fim, eles voam pelo espaço até chegarem à Terra, onde passam a se esconder para sobrevivência de todos.
+Dois seres do planeta Tevá, um lugar cheio de plantas, árvores e seres vivos, nativos de Tevá, longe do sistema solar, são amigos e vizinhos. Um dia, reunidos na casa de um deles, um ser divino avisa que o planeta será destruído por uma “Chuva de Meteoros”, e para se salvarem eles precisariam construir uma nave espacial, e ainda reunir algumas das espécies nativas do planeta para levá-los juntos na nave.
+Para cumprir sua missão, primeiro eles devem pegar os materiais necessários para construir a espaçonave. Dentro de uma caverna, eles precisam pular pedras pontudas e enfrentar criaturas perigosas. Se eles morrerem de alguma forma, eles retornam ao começo, iniciando essa jornada de novo.
+Para a segunda parte da missão, eles estão dentro da “selva” no planeta, e precisam pegar cada um dos demais seres vivos do planeta. Se eles morrerem durante esta missão, eles precisarão voltar ao início dela.
+Finalmente, quando eles estão prestes a chegar ao fim, os meteoros começam a cair, e eles precisam correr em direção a espaço nave. No caminho, eles enfrentam os meteoros caindo enquanto avançam. Se forem atingidos, precisarão retornar ao início. 
+Por fim, eles precisam se desviar dos meteoros que já estavam caindo em Tevá, manobrando a nave espacial por eles.
 
 #### Jogabilidade (Breve)
-Botões de movimentação lateral, pulo, interação e habilidade especial. Tempo regressivo visível na tela.
+Botões de movimentação lateral, pulo, interação e habilidade especial. Tempo regressivo visível na tela na fase 4.
 
 #### Jogabilidade (Detalhada)
 Movimentação lateral com controle direcional.
 Botão de pulo com física variável.
-Botão de interação para capturar espécies e coletar itens.
+Botão de tiro da nave na fase 4.
 Sistema de vida simples: ao morrer, reinicia fase atual.
-Tempo máximo total: 2 minutos.
-HUD mostra tempo restante, espécies capturadas e materiais coletados.
 Na fase da nave, controles mudam para movimentação livre em 2D com desvio de obstáculos.
 
 ### Recursos necessários
 #### 2D
 ● Texturas do ambiente
-Caverna, pedras, céu em colapso, nave espacial, novo planeta.
+Caverna, pedras, floresta, nave espacial.
 
 ● Sprites
 Personagens, espécies, itens para a nave, obstáculos, meteoros, nave.
 
 #### Som
 ● Sons ambiente
-Nível caverna: deslocamento em pedras
-Nível selva: deslocamento em pedras, criaturas
-Fase final: deslocamento em terra, explosões e meteoros
+Fundo para todas as fases em fliperama.
+Muda o tipo de som de fliperama na fase 4.
+
 
 ● Sons do personagem
-Pulo
-Corrida
-Coleta
-Dano
-Quando recomeça a fase por ter morrido
+Pulo.
 
 ● Outros sons
-Nave desviando dos meteoros
+Quando a nave atinge um pedra e explode.
+Tiros da nave.
+Quando os meteoros são destruídos na fase 4.
 
 #### Código
 ● Scripts de Personagem
 Movimento, pulo, colisão, recomeço de fase.
 
 ● Scripts Ambientais
-Contador regressivo, eventos de destruição, spawn de meteoros.
+Contador regressivo, spawn de meteoros.
 
 ### Animação
 ● Ambiente
-Meteoros cruzando o céu e caindo, cristais mudando de cor na caverna.
+Sprites dos inimigos se mexendo.
+Sprites dos animais se mexendo.
 
 ● Personagem
 Correr
 Pular
-Morrer
 
 ### Agendar
 
