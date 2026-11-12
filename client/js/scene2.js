@@ -60,11 +60,17 @@ class scene2 extends Phaser.Scene {
       0,
     );
     this.player.setCollideWorldBounds(true);
-    
+
     // Hitbox idêntica à do cave.js
     this.player.body.setSize(16, 32).setOffset(26, 32);
     this.player.setGravityY(850);
     this.player.setBounce(0);
+    this.playerNameText = this.add.text(this.player.x, this.player.y - 22, "P1", {
+      fontSize: "12px",
+      fill: "#ffffff",
+      stroke: "#000000",
+      strokeThickness: 3,
+    }).setDepth(1000);
 
     terra.setCollisionByProperty({ collides: true });
     this.physics.add.collider(this.player, terra);
@@ -91,6 +97,15 @@ class scene2 extends Phaser.Scene {
     this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
     this.keyEnter = this.input.keyboard.addKey(
       Phaser.Input.Keyboard.KeyCodes.ENTER,
+    );
+    this.keyNumpad1 = this.input.keyboard.addKey(
+      Phaser.Input.Keyboard.KeyCodes.NUMPAD_ONE,
+    );
+    this.keyNumpad3 = this.input.keyboard.addKey(
+      Phaser.Input.Keyboard.KeyCodes.NUMPAD_THREE,
+    );
+    this.keyNumpad5 = this.input.keyboard.addKey(
+      Phaser.Input.Keyboard.KeyCodes.NUMPAD_FIVE,
     );
 
     if (!this.anims.exists("stopped")) {
@@ -119,11 +134,34 @@ class scene2 extends Phaser.Scene {
       0,
     );
     this.player2.setCollideWorldBounds(true);
-    
+
     // Hitbox idêntica à do cave.js
     this.player2.body.setSize(16, 32).setOffset(26, 32);
     this.player2.setGravityY(850);
     this.player2.setBounce(0);
+    this.player2NameText = this.add.text(this.player2.x, this.player2.y - 22, "P2", {
+      fontSize: "12px",
+      fill: "#ffffff",
+      stroke: "#000000",
+      strokeThickness: 3,
+    }).setDepth(1000);
+
+    this.player3 = this.physics.add.sprite(
+      this.spawnPoint.x - 100,
+      this.spawnPoint.y,
+      "az",
+      0,
+    );
+    this.player3.setCollideWorldBounds(true);
+    this.player3.body.setSize(16, 32).setOffset(26, 32);
+    this.player3.setGravityY(850);
+    this.player3.setBounce(0);
+    this.player3NameText = this.add.text(this.player3.x, this.player3.y - 22, "P3", {
+      fontSize: "12px",
+      fill: "#ffffff",
+      stroke: "#000000",
+      strokeThickness: 3,
+    }).setDepth(1000);
 
     if (!this.anims.exists("stopped_vd")) {
       this.anims.create({
@@ -145,9 +183,11 @@ class scene2 extends Phaser.Scene {
 
     terra.setCollisionByProperty({ collides: true });
     this.physics.add.collider(this.player2, terra);
+    this.physics.add.collider(this.player3, terra);
 
     porta.setCollisionByProperty({ collides: true });
     this.physics.add.collider(this.player2, porta);
+    this.physics.add.collider(this.player3, porta);
 
     this.cameras.main.centerOn(this.spawnPoint.x, this.spawnPoint.y);
 
@@ -242,6 +282,15 @@ class scene2 extends Phaser.Scene {
       null,
       this,
     );
+    this.physics.add.overlap(
+      this.player3,
+      this.animals,
+      (player, animal) => {
+        this.collectAnimal(animal);
+      },
+      null,
+      this,
+    );
 
     this.game.lives = this.game.initialLives;
 
@@ -267,6 +316,11 @@ class scene2 extends Phaser.Scene {
       return;
     }
 
+    if (this.player3.y > 1392) {
+      this.respawnPlayer3();
+      return;
+    }
+
     const pad =
       this.input.gamepad.total > 0 ? this.input.gamepad.gamepads[0] : null;
     let xAxis = 0;
@@ -276,13 +330,12 @@ class scene2 extends Phaser.Scene {
       xAxis = pad.axes[0].getValue();
       jumpPressed = pad.buttons[2] && pad.buttons[2].pressed;
     } else {
-      if (this.cursors.left.isDown) {
+      if (this.keyA.isDown) {
         xAxis = -1;
-      } else if (this.cursors.right.isDown) {
+      } else if (this.keyD.isDown) {
         xAxis = 1;
       }
-      jumpPressed =
-        this.cursors.up.isDown || this.keyW.isDown || this.keySpace.isDown;
+      jumpPressed = this.keyW.isDown;
     }
 
     this.player.setVelocityX(xAxis * this.playerSpeed);
@@ -311,13 +364,12 @@ class scene2 extends Phaser.Scene {
       xAxis2 = pad2.axes[0].getValue();
       jumpPressed2 = pad2.buttons[2] && pad2.buttons[2].pressed;
     } else {
-      if (this.keyA.isDown) {
+      if (this.cursors.left.isDown) {
         xAxis2 = -1;
-      } else if (this.keyD.isDown) {
+      } else if (this.cursors.right.isDown) {
         xAxis2 = 1;
       }
-      jumpPressed2 =
-        this.keyW.isDown || this.keySpace.isDown || this.keyEnter.isDown;
+      jumpPressed2 = this.cursors.up.isDown;
     }
 
     this.player2.setVelocityX(xAxis2 * this.playerSpeed);
@@ -337,10 +389,41 @@ class scene2 extends Phaser.Scene {
       this.sound.play("pulo");
     }
 
+    let xAxis3 = 0;
+    let jumpPressed3 = false;
+
+    if (this.keyNumpad1.isDown) {
+      xAxis3 = -1;
+    } else if (this.keyNumpad3.isDown) {
+      xAxis3 = 1;
+    }
+    jumpPressed3 = this.keyNumpad5.isDown;
+
+    this.player3.setVelocityX(xAxis3 * this.playerSpeed);
+
+    if (Math.abs(xAxis3) > 0.1) {
+      this.player3.setFlipX(xAxis3 < 0);
+      this.player3.play("walk_vd", true);
+    } else {
+      this.player3.play("stopped_vd", true);
+    }
+
+    if (
+      jumpPressed3 &&
+      (this.player3.body.blocked.down || this.player3.body.touching.down)
+    ) {
+      this.player3.setVelocityY(this.playerJump);
+      this.sound.play("pulo");
+    }
+
+    this.playerNameText.setPosition(this.player.x, this.player.y - 22);
+    this.player2NameText.setPosition(this.player2.x, this.player2.y - 22);
+    this.player3NameText.setPosition(this.player3.x, this.player3.y - 22);
+
     // Mecânica de câmera compartilhada
-    if (this.player && this.player2) {
-      const cameraX = (this.player.x + this.player2.x) / 2;
-      const cameraY = (this.player.y + this.player2.y) / 2;
+    if (this.player && this.player2 && this.player3) {
+      const cameraX = (this.player.x + this.player2.x + this.player3.x) / 3;
+      const cameraY = (this.player.y + this.player2.y + this.player3.y) / 3;
 
       const cameraWidth = this.cameras.main.width;
       const cameraHeight = this.cameras.main.height;
@@ -375,6 +458,14 @@ class scene2 extends Phaser.Scene {
         this.player2.x = cameraRightBound - playerWidth;
         this.player2.setVelocityX(0);
       }
+
+      if (this.player3.x - playerWidth < cameraLeftBound) {
+        this.player3.x = cameraLeftBound + playerWidth;
+        this.player3.setVelocityX(0);
+      } else if (this.player3.x + playerWidth > cameraRightBound) {
+        this.player3.x = cameraRightBound - playerWidth;
+        this.player3.setVelocityX(0);
+      }
     }
   }
 
@@ -391,9 +482,11 @@ class scene2 extends Phaser.Scene {
     this.player.setPosition(this.spawnPoint.x, this.spawnPoint.y);
     this.player.setVelocity(0, 0);
 
-    // Ajustado também no reset para manter a consistência de menos 50
     this.player2.setPosition(this.spawnPoint.x - 50, this.spawnPoint.y);
     this.player2.setVelocity(0, 0);
+
+    this.player3.setPosition(this.spawnPoint.x - 100, this.spawnPoint.y);
+    this.player3.setVelocity(0, 0);
 
     this.cameras.main.centerOn(this.spawnPoint.x, this.spawnPoint.y);
   }
@@ -412,6 +505,19 @@ class scene2 extends Phaser.Scene {
   }
 
   respawnPlayer2() {
+    this.game.lives--;
+
+    if (this.game.lives <= 0) {
+      this.game.lives = this.game.initialLives;
+      this.scene.stop();
+      this.music.stop();
+      this.scene.start("start");
+    } else {
+      this.resetBothPlayers();
+    }
+  }
+
+  respawnPlayer3() {
     this.game.lives--;
 
     if (this.game.lives <= 0) {

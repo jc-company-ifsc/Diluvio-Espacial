@@ -20,6 +20,15 @@ class asteroids extends Phaser.Scene {
     this.add.image(160, 120, "gameover");
 
     this.physics.world.gravity.y = 0;
+    this.keyboard = this.input.keyboard;
+    this.keyA = this.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+    this.keyD = this.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+    this.keyW = this.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+    this.keyS = this.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
+    this.keySpace = this.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+    this.keyNumpad1 = this.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.NUMPAD_ONE);
+    this.keyNumpad3 = this.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.NUMPAD_THREE);
+    this.keyNumpad5 = this.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.NUMPAD_FIVE);
 
     this.background = this.add.tileSprite(160, 120, 320, 240, "background");
 
@@ -160,30 +169,52 @@ class asteroids extends Phaser.Scene {
   }
 
   update() {
-    // Controle da nave: segundo jogador (gamepad[1])
-    if (this.input.gamepad.total > 1) {
+    let keyboardX = 0;
+    let keyboardY = 0;
+    const keyboardMove =
+      this.keyA.isDown ||
+      this.keyD.isDown ||
+      this.keyW.isDown ||
+      this.keyS.isDown ||
+      this.keyNumpad1.isDown ||
+      this.keyNumpad3.isDown ||
+      this.keyNumpad5.isDown;
+
+    if (keyboardMove) {
+      if (this.keyA.isDown || this.keyNumpad1.isDown) {
+        keyboardX -= 1;
+      }
+      if (this.keyD.isDown || this.keyNumpad3.isDown) {
+        keyboardX += 1;
+      }
+      if (this.keyW.isDown || this.keyNumpad5.isDown) {
+        keyboardY -= 1;
+      }
+      if (this.keyS.isDown) {
+        keyboardY += 1;
+      }
+      this.nv.setVelocity(keyboardX * this.nvSpeed, keyboardY * this.nvSpeed);
+    } else if (this.input.gamepad.total > 1) {
       let xAxis = this.input.gamepad.gamepads[1].axes[0].getValue();
       let yAxis = this.input.gamepad.gamepads[1].axes[1].getValue();
       this.nv.setVelocity(xAxis * this.nvSpeed, yAxis * this.nvSpeed);
     }
 
-    // Tiro: primeiro jogador (gamepad[0])
+    // Tiro: primeiro jogador (joystick ou teclado)
     const pad =
       this.input.gamepad && this.input.gamepad.total > 0
         ? this.input.gamepad.getPad(0)
         : null;
 
-    let shootPressed = false;
+    let shootPressed = this.keySpace.isDown;
 
     if (pad) {
-      shootPressed = pad.Y;
+      shootPressed = pad.Y || this.keySpace.isDown;
     }
 
-    // Detectar transição de solto para pressionado
     const shootJustPressed = shootPressed && !this.shootPressedPrevious;
     this.shootPressedPrevious = shootPressed;
 
-    // Atirar apenas quando o botão é pressionado (transição)
     if (shootJustPressed && this.canShoot) {
       this.laser.play();
       const laser = this.laserBeams.create(

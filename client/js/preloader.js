@@ -132,11 +132,7 @@ class preloader extends Phaser.Scene {
 
   create() {
     this.scene.stop("preloader");
-    this.scene.start("cutscene", {
-      list: [1, 2, 3],
-      nextScene: "scene3",
-      cutsceneDelay: 8000,
-    });
+    this.scene.start("cave");
   }
 }
 

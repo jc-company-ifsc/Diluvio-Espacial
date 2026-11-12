@@ -81,10 +81,16 @@ class scene3 extends Phaser.Scene {
       0,
     );
     this.player.setCollideWorldBounds(true);
-    
+
     this.player.body.setSize(16, 32).setOffset(26, 32);
     this.player.setGravityY(850);
     this.player.setBounce(0);
+    this.playerNameText = this.add.text(this.player.x, this.player.y - 22, "P1", {
+      fontSize: "12px",
+      fill: "#ffffff",
+      stroke: "#000000",
+      strokeThickness: 3,
+    }).setDepth(1000);
 
     plataformas3.setCollisionByProperty({ collides: true });
     if (
@@ -115,6 +121,15 @@ class scene3 extends Phaser.Scene {
     this.keyEnter = this.input.keyboard.addKey(
       Phaser.Input.Keyboard.KeyCodes.ENTER,
     );
+    this.keyNumpad1 = this.input.keyboard.addKey(
+      Phaser.Input.Keyboard.KeyCodes.NUMPAD_ONE,
+    );
+    this.keyNumpad3 = this.input.keyboard.addKey(
+      Phaser.Input.Keyboard.KeyCodes.NUMPAD_THREE,
+    );
+    this.keyNumpad5 = this.input.keyboard.addKey(
+      Phaser.Input.Keyboard.KeyCodes.NUMPAD_FIVE,
+    );
 
     if (!this.anims.exists("stopped")) {
       this.anims.create({
@@ -142,10 +157,33 @@ class scene3 extends Phaser.Scene {
       0,
     );
     this.player2.setCollideWorldBounds(true);
-    
+
     this.player2.body.setSize(16, 32).setOffset(26, 32);
     this.player2.setGravityY(850);
     this.player2.setBounce(0);
+    this.player2NameText = this.add.text(this.player2.x, this.player2.y - 22, "P2", {
+      fontSize: "12px",
+      fill: "#ffffff",
+      stroke: "#000000",
+      strokeThickness: 3,
+    }).setDepth(1000);
+
+    this.player3 = this.physics.add.sprite(
+      this.spawnPoint.x - 50,
+      this.spawnPoint.y,
+      "az",
+      0,
+    );
+    this.player3.setCollideWorldBounds(true);
+    this.player3.body.setSize(16, 32).setOffset(26, 32);
+    this.player3.setGravityY(850);
+    this.player3.setBounce(0);
+    this.player3NameText = this.add.text(this.player3.x, this.player3.y - 22, "P3", {
+      fontSize: "12px",
+      fill: "#ffffff",
+      stroke: "#000000",
+      strokeThickness: 3,
+    }).setDepth(1000);
 
     if (!this.anims.exists("stopped_vd")) {
       this.anims.create({
@@ -173,6 +211,7 @@ class scene3 extends Phaser.Scene {
       plataformas3.setCollisionByExclusion([-1]);
     }
     this.physics.add.collider(this.player2, plataformas3);
+    this.physics.add.collider(this.player3, plataformas3);
 
     this.game.lives = this.game.initialLives;
 
@@ -220,11 +259,25 @@ class scene3 extends Phaser.Scene {
       null,
       this,
     );
+    this.physics.add.overlap(
+      this.player3,
+      this.asteroids,
+      () => {
+        this.respawnPlayer3();
+      },
+      null,
+      this,
+    );
   }
 
   update() {
     // 1. CHECAGEM RESTRITA DE VITÓRIA: Só avança se ultrapassar o eixo X em 2600
-    if (this.player.x > this.winZoneX || this.player2.x > this.winZoneX) {
+    if (
+      this.player.x > this.winZoneX ||
+      this.player2.x > this.winZoneX ||
+      this.player3.x > this.winZoneX
+    ) {
+      this.game.lives = this.game.initialLives;
       this.music.stop();
       this.scene.stop();
       this.scene.start("cutscene", {
@@ -246,6 +299,11 @@ class scene3 extends Phaser.Scene {
       return;
     }
 
+    if (this.player3.y > 2160) {
+      this.respawnPlayer3();
+      return;
+    }
+
     // Lógica de movimento Player 1
     const pad =
       this.input.gamepad.total > 0 ? this.input.gamepad.gamepads[0] : null;
@@ -256,13 +314,12 @@ class scene3 extends Phaser.Scene {
       xAxis = pad.axes[0].getValue();
       jumpPressed = pad.buttons[2] && pad.buttons[2].pressed;
     } else {
-      if (this.cursors.left.isDown) {
+      if (this.keyA.isDown) {
         xAxis = -1;
-      } else if (this.cursors.right.isDown) {
+      } else if (this.keyD.isDown) {
         xAxis = 1;
       }
-      jumpPressed =
-        this.cursors.up.isDown || this.keyW.isDown || this.keySpace.isDown;
+      jumpPressed = this.keyW.isDown;
     }
 
     this.player.setVelocityX(xAxis * this.playerSpeed);
@@ -292,13 +349,12 @@ class scene3 extends Phaser.Scene {
       xAxis2 = pad2.axes[0].getValue();
       jumpPressed2 = pad2.buttons[2] && pad2.buttons[2].pressed;
     } else {
-      if (this.keyA.isDown) {
+      if (this.cursors.left.isDown) {
         xAxis2 = -1;
-      } else if (this.keyD.isDown) {
+      } else if (this.cursors.right.isDown) {
         xAxis2 = 1;
       }
-      jumpPressed2 =
-        this.keyW.isDown || this.keySpace.isDown || this.keyEnter.isDown;
+      jumpPressed2 = this.cursors.up.isDown;
     }
 
     this.player2.setVelocityX(xAxis2 * this.playerSpeed);
@@ -317,6 +373,37 @@ class scene3 extends Phaser.Scene {
       this.player2.setVelocityY(this.playerJump);
       this.sound.play("pulo");
     }
+
+    let xAxis3 = 0;
+    let jumpPressed3 = false;
+
+    if (this.keyNumpad1.isDown) {
+      xAxis3 = -1;
+    } else if (this.keyNumpad3.isDown) {
+      xAxis3 = 1;
+    }
+    jumpPressed3 = this.keyNumpad5.isDown;
+
+    this.player3.setVelocityX(xAxis3 * this.playerSpeed);
+
+    if (Math.abs(xAxis3) > 0.1) {
+      this.player3.setFlipX(xAxis3 < 0);
+      this.player3.play("walk_vd", true);
+    } else {
+      this.player3.play("stopped_vd", true);
+    }
+
+    if (
+      jumpPressed3 &&
+      (this.player3.body.blocked.down || this.player3.body.touching.down)
+    ) {
+      this.player3.setVelocityY(this.playerJump);
+      this.sound.play("pulo");
+    }
+
+    this.playerNameText.setPosition(this.player.x, this.player.y - 22);
+    this.player2NameText.setPosition(this.player2.x, this.player2.y - 22);
+    this.player3NameText.setPosition(this.player3.x, this.player3.y - 22);
 
     // Sistema de spawn dinâmico de meteoros
     if (this.newAsteroid) {
@@ -431,6 +518,9 @@ class scene3 extends Phaser.Scene {
 
     this.player2.setPosition(this.spawnPoint.x + 50, this.spawnPoint.y - 20);
     this.player2.setVelocity(0, 0);
+
+    this.player3.setPosition(this.spawnPoint.x - 50, this.spawnPoint.y - 20);
+    this.player3.setVelocity(0, 0);
   }
 
   respawnPlayer() {
@@ -447,6 +537,19 @@ class scene3 extends Phaser.Scene {
   }
 
   respawnPlayer2() {
+    this.game.lives--;
+
+    if (this.game.lives <= 0) {
+      this.game.lives = this.game.initialLives;
+      this.scene.stop();
+      this.music.stop();
+      this.scene.start("start");
+    } else {
+      this.resetBothPlayers();
+    }
+  }
+
+  respawnPlayer3() {
     this.game.lives--;
 
     if (this.game.lives <= 0) {

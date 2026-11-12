@@ -61,6 +61,12 @@ class cave extends Phaser.Scene {
     this.player.body.setSize(16, 32).setOffset(26, 32);
     this.player.setGravityY(850);
     this.player.setBounce(0);
+    this.playerNameText = this.add.text(this.player.x, this.player.y - 22, "P1", {
+      fontSize: "12px",
+      fill: "#ffffff",
+      stroke: "#000000",
+      strokeThickness: 3,
+    }).setDepth(1000);
 
     this.plataforma1.setCollisionByProperty({ collides: true });
     this.physics.add.collider(this.player, [this.teto, this.plataforma1]);
@@ -101,7 +107,13 @@ class cave extends Phaser.Scene {
     this.player2.body.setSize(16, 32).setOffset(26, 32);
     this.player2.setGravityY(850);
     this.player2.setBounce(0);
-    
+    this.player2NameText = this.add.text(this.player2.x, this.player2.y - 22, "P2", {
+      fontSize: "12px",
+      fill: "#ffffff",
+      stroke: "#000000",
+      strokeThickness: 3,
+    }).setDepth(1000);
+
     if (!this.anims.exists("stopped_vd")) {
       this.anims.create({
         key: "stopped_vd",
@@ -120,9 +132,30 @@ class cave extends Phaser.Scene {
       });
     }
 
+    this.player3 = this.physics.add.sprite(
+      this.spawnPoint.x + 50,
+      this.spawnPoint.y,
+      "az",
+      0,
+    );
+    this.player3.setCollideWorldBounds(true);
+    this.player3.body.setSize(16, 32).setOffset(26, 32);
+    this.player3.setGravityY(850);
+    this.player3.setBounce(0);
+    this.player3NameText = this.add.text(this.player3.x, this.player3.y - 22, "P3", {
+      fontSize: "12px",
+      fill: "#ffffff",
+      stroke: "#000000",
+      strokeThickness: 3,
+    }).setDepth(1000);
+
     this.physics.add.collider(this.player2, [this.teto, this.plataforma1]);
     this.physics.add.collider(this.player2, this.espinhos, () =>
       this.respawnPlayer2(),
+    );
+    this.physics.add.collider(this.player3, [this.teto, this.plataforma1]);
+    this.physics.add.collider(this.player3, this.espinhos, () =>
+      this.respawnPlayer3(),
     );
 
     this.cursors = this.input.keyboard.createCursorKeys();
@@ -134,6 +167,15 @@ class cave extends Phaser.Scene {
     this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
     this.keyEnter = this.input.keyboard.addKey(
       Phaser.Input.Keyboard.KeyCodes.ENTER,
+    );
+    this.keyNumpad1 = this.input.keyboard.addKey(
+      Phaser.Input.Keyboard.KeyCodes.NUMPAD_ONE,
+    );
+    this.keyNumpad3 = this.input.keyboard.addKey(
+      Phaser.Input.Keyboard.KeyCodes.NUMPAD_THREE,
+    );
+    this.keyNumpad5 = this.input.keyboard.addKey(
+      Phaser.Input.Keyboard.KeyCodes.NUMPAD_FIVE,
     );
 
     this.pad = this.input.gamepad.gamepads[0] || null;
@@ -209,6 +251,20 @@ class cave extends Phaser.Scene {
       null,
       this,
     );
+    this.physics.add.overlap(
+      this.player3,
+      this.worms,
+      (player, worm) => {
+        if (
+          worm.anims.currentFrame.index >= 4 &&
+          worm.anims.currentFrame.index <= 8
+        ) {
+          this.respawnPlayer3();
+        }
+      },
+      null,
+      this,
+    );
 
     this.anims.create({
       key: "bat",
@@ -272,6 +328,15 @@ class cave extends Phaser.Scene {
       null,
       this,
     );
+    this.physics.add.overlap(
+      this.player3,
+      this.bats,
+      () => {
+        this.respawnPlayer3();
+      },
+      null,
+      this,
+    );
 
     // Criar grupo de artefatos UMA ÚNICA VEZ
     this.artifacts = this.physics.add.group();
@@ -316,6 +381,15 @@ class cave extends Phaser.Scene {
       null,
       this,
     );
+    this.physics.add.overlap(
+      this.player3,
+      this.artifacts,
+      (player, artifact) => {
+        this.collectArtifact(artifact);
+      },
+      null,
+      this,
+    );
 
     // Resetar vidas para a fase
     this.game.lives = this.game.initialLives;
@@ -344,6 +418,11 @@ class cave extends Phaser.Scene {
       return;
     }
 
+    if (this.player3.y > this.playerGroundLimit) {
+      this.respawnPlayer3();
+      return;
+    }
+
     const pad =
       this.input.gamepad.total > 0 ? this.input.gamepad.gamepads[0] : null;
     let xAxis = 0;
@@ -353,13 +432,12 @@ class cave extends Phaser.Scene {
       xAxis = pad.axes[0].getValue();
       jumpPressed = pad.buttons[2].pressed;
     } else {
-      if (this.cursors.left.isDown) {
+      if (this.keyA.isDown) {
         xAxis = -1;
-      } else if (this.cursors.right.isDown) {
+      } else if (this.keyD.isDown) {
         xAxis = 1;
       }
-      jumpPressed =
-        this.cursors.up.isDown || this.keyW.isDown || this.keySpace.isDown;
+      jumpPressed = this.keyW.isDown;
     }
 
     this.player.setVelocityX(xAxis * this.playerSpeed);
@@ -379,7 +457,7 @@ class cave extends Phaser.Scene {
       this.sound.play("pulo");
     }
 
-    // Controles do player 2 (gamepad ou A/D + W/Space/Enter)
+    // Controles do player 2 (setas)
     const pad2 =
       this.input.gamepad.total > 1 ? this.input.gamepad.gamepads[1] : null;
     let xAxis2 = 0;
@@ -389,13 +467,12 @@ class cave extends Phaser.Scene {
       xAxis2 = pad2.axes[0].getValue();
       jumpPressed2 = pad2.buttons[2].pressed;
     } else {
-      if (this.keyA.isDown) {
+      if (this.cursors.left.isDown) {
         xAxis2 = -1;
-      } else if (this.keyD.isDown) {
+      } else if (this.cursors.right.isDown) {
         xAxis2 = 1;
       }
-      jumpPressed2 =
-        this.keyW.isDown || this.keySpace.isDown || this.keyEnter.isDown;
+      jumpPressed2 = this.cursors.up.isDown;
     }
 
     this.player2.setVelocityX(xAxis2 * this.playerSpeed);
@@ -415,10 +492,41 @@ class cave extends Phaser.Scene {
       this.sound.play("pulo");
     }
 
-    if (this.player && this.player2) {
-      // Câmera centrada entre os dois jogadores
-      const cameraX = (this.player.x + this.player2.x) / 2;
-      const cameraY = (this.player.y + this.player2.y) / 2;
+    let xAxis3 = 0;
+    let jumpPressed3 = false;
+
+    if (this.keyNumpad1.isDown) {
+      xAxis3 = -1;
+    } else if (this.keyNumpad3.isDown) {
+      xAxis3 = 1;
+    }
+    jumpPressed3 = this.keyNumpad5.isDown;
+
+    this.player3.setVelocityX(xAxis3 * this.playerSpeed);
+
+    if (Math.abs(xAxis3) > 0.1) {
+      this.player3.setFlipX(xAxis3 < 0);
+      this.player3.play("walk_vd", true);
+    } else {
+      this.player3.play("stopped_vd", true);
+    }
+
+    if (
+      jumpPressed3 &&
+      (this.player3.body.blocked.down || this.player3.body.touching.down)
+    ) {
+      this.player3.setVelocityY(this.playerJump);
+      this.sound.play("pulo");
+    }
+
+    if (this.player && this.player2 && this.player3) {
+      this.playerNameText.setPosition(this.player.x, this.player.y - 22);
+      this.player2NameText.setPosition(this.player2.x, this.player2.y - 22);
+      this.player3NameText.setPosition(this.player3.x, this.player3.y - 22);
+
+      // Câmera centrada entre os três jogadores
+      const cameraX = (this.player.x + this.player2.x + this.player3.x) / 3;
+      const cameraY = (this.player.y + this.player2.y + this.player3.y) / 3;
 
       const cameraWidth = this.cameras.main.width;
       const cameraHeight = this.cameras.main.height;
@@ -461,6 +569,14 @@ class cave extends Phaser.Scene {
         this.player2.x = cameraRightBound - playerWidth;
         this.player2.setVelocityX(0);
       }
+
+      if (this.player3.x - playerWidth < cameraLeftBound) {
+        this.player3.x = cameraLeftBound + playerWidth;
+        this.player3.setVelocityX(0);
+      } else if (this.player3.x + playerWidth > cameraRightBound) {
+        this.player3.x = cameraRightBound - playerWidth;
+        this.player3.setVelocityX(0);
+      }
     }
   }
 
@@ -475,7 +591,7 @@ class cave extends Phaser.Scene {
         .setScrollFactor(0);
     }
 
-    // Resetar ambos os jogadores (usando o this.spawnPoint atualizado)
+    // Resetar os jogadores (usando o this.spawnPoint atualizado)
     this.player.setPosition(this.spawnPoint.x, this.spawnPoint.y);
     this.player.setVelocity(0, 0);
     this.player.play("stopped", true);
@@ -483,6 +599,10 @@ class cave extends Phaser.Scene {
     this.player2.setPosition(this.spawnPoint.x + 100, this.spawnPoint.y);
     this.player2.setVelocity(0, 0);
     this.player2.play("stopped_vd", true);
+
+    this.player3.setPosition(this.spawnPoint.x + 50, this.spawnPoint.y);
+    this.player3.setVelocity(0, 0);
+    this.player3.play("stopped_vd", true);
   }
 
   respawnPlayer() {
@@ -499,6 +619,19 @@ class cave extends Phaser.Scene {
   }
 
   respawnPlayer2() {
+    this.game.lives--;
+
+    if (this.game.lives <= 0) {
+      this.game.lives = this.game.initialLives;
+      this.scene.stop();
+      this.music.stop();
+      this.scene.start("start");
+    } else {
+      this.resetBothPlayers();
+    }
+  }
+
+  respawnPlayer3() {
     this.game.lives--;
 
     if (this.game.lives <= 0) {
